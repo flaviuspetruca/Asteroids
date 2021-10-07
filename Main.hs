@@ -16,40 +16,41 @@ class Movable a where move :: a -> a
 
 
 data Player = MkPlayer {
-  name::Name,
-  gameScore:: GameScore,
-  position:: Position,
-  lives:: Lives,
-  orientation:: Orientation
+  name ::Name,
+  gameScore :: GameScore,
+  position :: Position,
+  lives :: Lives,
+  orientation :: Orientation
 }
 
 data Movement = MkMovement {
-    pos:: Position
-  , orient:: Orientation
-  , speed:: Speed
+  pos :: Position, 
+  orient :: Orientation, 
+  speed :: Speed
 }
 
 
-data Enemy =  Asteroid { movement:: Movement }|
-    Spaceship {
-      movement :: Movement
-    , artillery:: [Bullet]
-}
+data Enemy =  
+  Asteroid { movement:: Movement } |
+  Spaceship {
+    movement :: Movement, 
+    artillery :: [Bullet]
+  }
 
 
 data GameState = MkGameState {
-        score :: GameScore
-      , player :: Player
-      , enemies :: [Enemy]
-      , allArtilery ::[Bullet]
-      , difficulty :: Difficulty
-      , started :: Bool
-      , paused :: Bool
+  score :: GameScore,
+  player :: Player,
+  enemies :: [Enemy],
+  allArtilery :: [Bullet],
+  difficulty :: Difficulty,
+  started :: Bool,
+  paused :: Bool
 }
 
 data MainMenu = Menu {
-    playerName:: Name
-  , highScores::[(Name, Int)]
-  , gameState::GameState
+  playerName :: Name, 
+  highScores :: [(Name, Int)], 
+  gameState :: GameState
 }
 
