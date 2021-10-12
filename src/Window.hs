@@ -3,9 +3,9 @@ module Window where
 import Graphics.Gloss
 
 playy
-  = display (FullScreen) 
+  = animate (FullScreen) -- should be simulate or play
     black
-    picture
+    (\x -> picture)
 
 picture 
   = Translate (-170) (-20) 
