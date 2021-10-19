@@ -1,8 +1,12 @@
 module Main where
 
 import Lib
---import Main
-import Window
+import Menu
+import Logic
+import Graphics.Gloss
 
 main :: IO ()
-main = playy -- TBD
+main = animate (FullScreen) black frame
+  where frame :: Float -> Picture
+        frame seconds = render $ enterName seconds initialState
+--main = displayIO (FullScreen) black (pure (render initialState))
