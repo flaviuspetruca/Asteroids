@@ -1,8 +1,10 @@
 module Window(main) where
 
+import Data.List
 import Graphics.Gloss
 import Graphics.Gloss.Data.ViewPort
 import Graphics.Gloss.Interface.Pure.Game
+    ( Key(Char), KeyState(Up, Down), Event(EventKey) )
 import qualified GHC.Base as S
 
 width, height, offset :: Int
@@ -43,6 +45,7 @@ data Player = MkPlayer {
 }
 
 data GameState = MkGameState {
+  keys :: [Key],
   score :: GameScore,
   player :: Player,
   enemies :: [Enemy],
@@ -65,6 +68,7 @@ data Movement = MkMovement {
 initialState :: GameState
 initialState = MkGameState
   {
+    keys = [],
     score = 0,
     player = MkPlayer{ 
       name = "Flavius",
@@ -72,7 +76,7 @@ initialState = MkGameState
       position = (0,0),
       velocity = 0.0,
       lives = 3,
-      orientation = 90
+      orientation = 270
     },
     enemies = [Asteroid, Asteroid, Asteroid],
     allArtilery = [(1,1,1), (1,2,2)],
@@ -81,23 +85,38 @@ initialState = MkGameState
     paused = False
   }
 
-mkPlayer :: Color -> Float -> Float -> Picture 
-mkPlayer c x y = translate x y $ color c $ Polygon [(15, 0), (-15,10),(-10,0),(-15,-10),(15,0)]
+mkPlayer :: Color -> Float -> Float -> Float -> Picture 
+mkPlayer c x y o = translate x y $ rotate o $ color c  $ Polygon [(15, 0), (-15,10),(-10,0),(-15,-10),(15,0)]
 
 -- | Convert a game state into a picture.
 render :: GameState -> Picture
-render (MkGameState _ (MkPlayer _ _ (x,y) _ _ _) _ _ _ _ _) = pictures [mkPlayer white x y]
+render (MkGameState ks _ (MkPlayer _ _ (x,y) _ _ o) _ _ _ _ _) = pictures [mkPlayer white x y o]
 
 -- | Update the spaceship movement using its current velocity.
 movePlayer :: Float    -- ^ The number of seconds since last update
          -> GameState -- ^ The initial game state
          -> GameState -- ^ A new game state with an updated spaceship movement
-movePlayer seconds (MkGameState s (MkPlayer _ _ (x,y) vel _ _) _ _ _ _ _) = newGame
-  where newGame = MkGameState s (MkPlayer "Flavius" 0 (x,y) vel 3 90) [Asteroid] [] Easy True False 
+movePlayer seconds (MkGameState ks s (MkPlayer _ _ (x,y) vel _ o) _ _ _ _ _) = newGame
+  where newGame = MkGameState ks s (MkPlayer "Flavius" 0 (x,y) vel 3 o) [Asteroid] [] Easy True False 
 
 
 update ::  Float -> GameState -> GameState
-update sec (MkGameState s (MkPlayer n gs (x,y) vel l o) e a d st p) = movePlayer sec (MkGameState s (MkPlayer n gs (x,y) (acceleration vel (-0.5)) l o) e a d st p)
+update sec (MkGameState ks s (MkPlayer n gs (x,y) vel l o) e a d st p) 
+  | Char 'w' `elem` ks = movePlayer sec (MkGameState ks s (MkPlayer n gs (newPos (x,y) o vel) (acceleration vel (-0.1)) l o) e a d st p)
+  | Char 'a' `elem` ks = movePlayer sec (MkGameState ks s (MkPlayer n gs (x,y) vel l (newOr o (-5))) e a d st p)
+  | Char 'd' `elem` ks = movePlayer sec (MkGameState ks s (MkPlayer n gs (x,y) vel l (newOr o   5)) e a d st p)
+  | otherwise          = movePlayer sec (MkGameState ks s (MkPlayer n gs (x,y) (acceleration vel (-0.1)) l o) e a d st p)
+  where 
+        newOr :: Float -> Float -> Float 
+        newOr o x | o + x > 360 = o + x - 360
+                  | otherwise = o + x
+        newPos :: (Float, Float) -> Orientation -> Velocity -> (Float, Float)
+        newPos (x,y) o v  | v == 0 = (x,y)
+                          | otherwise = case () of
+                                        ()  | o >= 0  && o <= 90  -> (x, y+o/10)
+                                            | o > 90  && o <= 180 -> (x-(180-o)/10, y+(o-90)/10)
+                                            | o > 180 && o <= 270 -> (x-(270-o)/10, y-(o-180)/10)
+                                            | otherwise           -> (x+(o-270)/10, y-(360-o)/10)
 
 {- mkMove :: Key -> Velocity -> Position -> Position
 mkMove (Char 'w') v (x,y) | v < 0
@@ -112,9 +131,12 @@ acceleration vel newVel | newVel < 0 && (vel + newVel) >= 0   = vel + newVel
                         | vel + newVel >= 20                  = 20
                         | otherwise                           = vel + newVel
 
-handleKeys :: Event -> GameState -> GameState
-handleKeys (EventKey (Char 's') _ _ _) (MkGameState s (MkPlayer n gs (x,y) vel l o) e a d st p)  = MkGameState s (MkPlayer n gs (x,y-vel) (acceleration vel 2) l o) e a d st p
-handleKeys (EventKey (Char 'w') _ _ _) (MkGameState s (MkPlayer n gs (x,y) vel l o) e a d st p)  = MkGameState s (MkPlayer n gs (x,y+vel) (acceleration vel 2) l o) e a d st p
-handleKeys (EventKey (Char 'a') _ _ _) (MkGameState s (MkPlayer n gs (x,y) vel l o) e a d st p)  = MkGameState s (MkPlayer n gs (x-vel,y) (acceleration vel 2) l o) e a d st p
-handleKeys (EventKey (Char 'd') _ _ _) (MkGameState s (MkPlayer n gs (x,y) vel l o) e a d st p)  = MkGameState s (MkPlayer n gs (x+vel,y) (acceleration vel 2) l o) e a d st p
+handleKeys :: Event-> GameState -> GameState
+handleKeys (EventKey key@(Char c) state _ _) g@(MkGameState ks s (MkPlayer n gs (x,y) vel l o) e a d st p)
+  | c == 'w' =  case state of Down  -> MkGameState (insert key ks) s (MkPlayer n gs (x,y) (acceleration vel 2) l o) e a d st p
+                              Up    -> MkGameState (delete key ks) s (MkPlayer n gs (x,y) vel l o) e a d st p
+  | c == 'a' =  case state of Down  -> MkGameState (insert key ks) s (MkPlayer n gs (x,y) (acceleration vel 2) l o) e a d st p
+                              Up    -> MkGameState (delete key ks) s (MkPlayer n gs (x,y) vel l o) e a d st p
+  | c == 'd' =  case state of Down  -> MkGameState (insert key ks) s (MkPlayer n gs (x,y) (acceleration vel 2) l o) e a d st p
+                              Up    -> MkGameState (delete key ks) s (MkPlayer n gs (x,y) vel l o) e a d st p
 handleKeys _ game = game
