@@ -1,24 +1,23 @@
 module Logic where
 
-import Menu
 import Graphics.Gloss
 
-data GameState'
-  = State
-    { position :: (Float, Float),
-      lives :: Float,
-      paused :: Bool }
+data GameState -- TBD: scores :: [Int]
+  = EnterName
+    { textBoxes :: [Picture],
+      name :: String }
   | MainMenu
-    { textBoxes :: [Picture] } deriving Show
-
-initialState :: GameState'
-initialState = MainMenu name
-
-render :: GameState' -> Picture
-render (MainMenu pics)
-  = pictures pics
-
-enterName :: Float -> GameState' -> GameState'
-enterName seconds game
-  | seconds > 2.0 = game { textBoxes = menu }
-  | otherwise = game
+    { textBoxes :: [Picture],
+      name :: String,
+      score :: Int }
+  | HighScore
+    { textBoxes :: [Picture],
+      name :: String,
+      score :: Int }
+  | GameState
+    { textBoxes :: [Picture],
+      name :: String,
+      score :: Int,
+      lives :: Float,
+      paused :: Bool,
+      position :: (Float, Float) } deriving Show
