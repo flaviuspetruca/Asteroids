@@ -3,13 +3,13 @@ D:\haskell\Asteroids\.stack-work\dist\274b403a\build\autogen\Paths_Asteroids.hs:
 D:\haskell\Asteroids\README.md:
   hash: 5d463217cff083a1e01d28e932293b79bd3156b3bfacb906795ccbf96cadce96
 D:\haskell\Asteroids\package.yaml:
-  hash: 9646f1ab814ed3f18760f10465ab986f28b8773663ca762b2287c20472f8f255
+  hash: 1424b587f74a61328cab1dc9564b72276b4d94c924fc270e6d94a34968ccde7c
 D:\haskell\Asteroids\.stack-work\dist\274b403a\build\autogen\cabal_macros.h:
-  hash: 6f8fed4e293b50f48bbd15f8db969aadd80c63302a01432a9312a2db48db97f6
+  hash: c275b92cc9b5d26aa76c7b160de680d7f9b8963927582fb78065c71c2fcc73c7
 D:\haskell\Asteroids\src\Lib.hs:
   hash: db4525e8bf84e3848123ab8c93c0b30969946090f4c5d48b686a3bdbfbc92017
 D:\haskell\Asteroids\Asteroids.cabal:
-  hash: c6b7f11f98f60da88923d99717bbaf176255bd6dcd2467bad0024f57434c6bd4
+  hash: 40e67088ce6698e6df5f0c190206e296c458e78a3b6ab64f85d9dcde976adca6
 C:\Users\dmant\AppData\Local\Programs\stack\x86_64-windows\ghc-8.10.7\lib\include\ghcversion.h:
   hash: c013160c9aa8a98f4638616496dce720c23ceca8ef9d6b3212b654642fbda5e4
 D:\haskell\Asteroids\ChangeLog.md:
@@ -17,4 +17,4 @@ D:\haskell\Asteroids\ChangeLog.md:
 D:\haskell\Asteroids\src\Main.hs:
   hash: 2c013e05646ff0d90854c93838f269bee4c33627ed38d328e44e3cf7f1db0079
 D:\haskell\Asteroids\src\Window.hs:
-  hash: b74ba73e8068d0f56310c033d4dd666b6c54c1b50e459914d0fa8b4bb6f80774
+  hash: a38d44526abeadbc8ffc41872daeeb8656c2c8aecb8e1b5bc652f2526558006b

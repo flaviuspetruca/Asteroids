@@ -33,6 +33,17 @@
   (major1) == 4 && (major2) == 14 && (minor) <= 3)
 #endif /* MIN_VERSION_base */
 
+/* package gjk-0.0.0.2 */
+#ifndef VERSION_gjk
+#define VERSION_gjk "0.0.0.2"
+#endif /* VERSION_gjk */
+#ifndef MIN_VERSION_gjk
+#define MIN_VERSION_gjk(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  0 || \
+  (major1) == 0 && (major2) == 0 && (minor) <= 0)
+#endif /* MIN_VERSION_gjk */
+
 /* package gloss-1.13.2.1 */
 #ifndef VERSION_gloss
 #define VERSION_gloss "1.13.2.1"
@@ -54,6 +65,17 @@
   (major1) == 3000 && (major2) <  2 || \
   (major1) == 3000 && (major2) == 2 && (minor) <= 0)
 #endif /* MIN_VERSION_numbers */
+
+/* package random-1.2.0 */
+#ifndef VERSION_random
+#define VERSION_random "1.2.0"
+#endif /* VERSION_random */
+#ifndef MIN_VERSION_random
+#define MIN_VERSION_random(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  2 || \
+  (major1) == 1 && (major2) == 2 && (minor) <= 0)
+#endif /* MIN_VERSION_random */
 
 /* tool gcc-9.2.0 */
 #ifndef TOOL_VERSION_gcc
@@ -144,7 +166,7 @@
 #endif /* MIN_TOOL_VERSION_strip */
 
 #ifndef CURRENT_COMPONENT_ID
-#define CURRENT_COMPONENT_ID "Asteroids-0.1.0.0-193VbB3RTfWEaBODlweCnB-Asteroids-exe"
+#define CURRENT_COMPONENT_ID "Asteroids-0.1.0.0-IoiWkqWqHq63Y8GM94wFYv-Asteroids-exe"
 #endif /* CURRENT_COMPONENT_ID */
 #ifndef CURRENT_PACKAGE_VERSION
 #define CURRENT_PACKAGE_VERSION "0.1.0.0"

@@ -29,12 +29,12 @@ version :: Version
 version = Version [0,1,0,0] []
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
 
-bindir     = "D:\\haskell\\Asteroids\\.stack-work\\install\\ef28ad40\\bin"
-libdir     = "D:\\haskell\\Asteroids\\.stack-work\\install\\ef28ad40\\lib\\x86_64-windows-ghc-8.10.7\\Asteroids-0.1.0.0-GoLUdauZazh7gkJlDEQQOd"
-dynlibdir  = "D:\\haskell\\Asteroids\\.stack-work\\install\\ef28ad40\\lib\\x86_64-windows-ghc-8.10.7"
-datadir    = "D:\\haskell\\Asteroids\\.stack-work\\install\\ef28ad40\\share\\x86_64-windows-ghc-8.10.7\\Asteroids-0.1.0.0"
-libexecdir = "D:\\haskell\\Asteroids\\.stack-work\\install\\ef28ad40\\libexec\\x86_64-windows-ghc-8.10.7\\Asteroids-0.1.0.0"
-sysconfdir = "D:\\haskell\\Asteroids\\.stack-work\\install\\ef28ad40\\etc"
+bindir     = "D:\\haskell\\Asteroids\\.stack-work\\install\\a63e090b\\bin"
+libdir     = "D:\\haskell\\Asteroids\\.stack-work\\install\\a63e090b\\lib\\x86_64-windows-ghc-8.10.7\\Asteroids-0.1.0.0-8RpuaMJGcJ6G37tlEXz0uJ"
+dynlibdir  = "D:\\haskell\\Asteroids\\.stack-work\\install\\a63e090b\\lib\\x86_64-windows-ghc-8.10.7"
+datadir    = "D:\\haskell\\Asteroids\\.stack-work\\install\\a63e090b\\share\\x86_64-windows-ghc-8.10.7\\Asteroids-0.1.0.0"
+libexecdir = "D:\\haskell\\Asteroids\\.stack-work\\install\\a63e090b\\libexec\\x86_64-windows-ghc-8.10.7\\Asteroids-0.1.0.0"
+sysconfdir = "D:\\haskell\\Asteroids\\.stack-work\\install\\a63e090b\\etc"
 
 getBinDir, getLibDir, getDynLibDir, getDataDir, getLibexecDir, getSysconfDir :: IO FilePath
 getBinDir = catchIO (getEnv "Asteroids_bindir") (\_ -> return bindir)
