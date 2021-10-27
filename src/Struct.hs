@@ -37,6 +37,7 @@ data GameState -- TBD: scores :: [Int]
   | MkPauseMenu
     { game :: GameState,
       textBoxes :: [Picture] }
+  | MkQuitGame
 
 data Player = MkPlayer { -- tbd
   pName :: Name,

@@ -1,3 +1,5 @@
 
 [X] Integrate gamestate into main menu
 [X] Integrate pause menu into gamestate
+[ ] Refactor constructor approach into boolean approach when possible
+[ ] Refactor default boxes to avoid constantly generating new pictures

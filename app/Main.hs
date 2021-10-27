@@ -10,5 +10,4 @@ import System.Random
 
 main = play window background fps initialMenuState render handleKeys update
 
-
 initialMenuState = MkEnterName enterBox ""

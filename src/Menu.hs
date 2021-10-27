@@ -3,7 +3,6 @@ module Menu where
 import Graphics.Gloss
 import Graphics.Gloss.Data.ViewPort
 import Graphics.Gloss.Interface.Pure.Game
---import Logic
 
 import Struct
 
@@ -15,7 +14,7 @@ import Struct
 --main = undefined
 
 enterBox = [enterText, enterBorder]
-menuBox = [startText, startBorder, scoreText, scoreBorder]
+menuBox = [startText, startBorder, scoreText, scoreBorder, quitText, quitBorder]
 pauseBox = [resumeText, resumeBorder, scoreText, scoreBorder, quitText, quitBorder]
 
 --initialState :: GameState

@@ -25,7 +25,6 @@ render (MkGameState ks _ (MkPlayer _ _ (x,y) _ _ o oo) en _ _ _ _ _ )
 render (MkPauseMenu g pics) = pictures pics
 
 update :: Float -> GameState -> GameState
---update _ = enterName
 update seconds (MkEnterName boxes name) = (MkEnterName boxes name)
 update seconds (MkMainMenu boxes name score) = (MkMainMenu boxes name score)
 update seconds (MkHighScore boxes name score inGame g) = (MkHighScore boxes name score inGame g)
@@ -93,6 +92,7 @@ handleKeys (EventKey (Char ch) Down _ _) (MkEnterName boxes currName)
 handleKeys (EventKey (MouseButton LeftButton) Down _ mousePos) mm@(MkMainMenu boxes currName score)
   | x > (-460) && x < 500 && y > (-60) && y < 20 = game
   | x > (-460) && x < 500 && y > (-142) && y < (-62) = (MkHighScore currScore currName score False mm)
+  | x > (-460) && x < 500 && y > (-224) && y < (-144) = (MkQuitGame)
   | otherwise = mm -- REMOVE?
     where updatedBoxes = makeText currName (-460) (80) : menuBox
           (x, y) = mousePos
@@ -103,10 +103,6 @@ handleKeys (EventKey (MouseButton LeftButton) Down _ mousePos) mm@(MkMainMenu bo
           enemies = fst $ mkAsteroids 10 (mkStdGen 2)
           allArtillery = [(1,1,1), (1,2,2)]
           sg = snd $ mkAsteroids 10 (mkStdGen 2)
---handleKeys (EventKey (MouseButton LeftButton) Down _ mousePos) (MkGameState box name score hp True pos)
---  | x > (-460) && x < 500 && y > (-224) && y < (-144) = (MainMenu box name score)
---  | otherwise = (MkGameState box name score hp True pos)
---    where (x, y) = mousePos
 handleKeys (EventKey key@(Char c) state _ _) g@(MkGameState ks s (MkPlayer n gs (x,y) vel l o oo) e a d st p r)
   | c == 'w' =  case state of Down  -> MkGameState (insert key ks) s (MkPlayer n gs (x,y) vel l o oo) e a d st p r
                               Up    -> MkGameState (delete key ks) s (MkPlayer n gs (x,y) vel l o oo) e a d st p r
