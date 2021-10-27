@@ -65,9 +65,10 @@ type GameScore = Int
 type Orientation = Float
 type Velocity = Float
 type Lives = Int
+
 data Difficulty = Hard | Medium | Easy
 data Size = Large | Med | Small deriving(Eq)
-type Bullet = (Float, Float, Float)
+data Bullet = MkBullet Position Position Orientation Velocity
 
 window :: Display
 window = FullScreen
