@@ -87,7 +87,7 @@ quitBorder
   $ rectangleWire (1600) (132) 
 
 deadText
-  = Translate (-240) (40)
+  = Translate (-260) (40)
   $ Scale 0.8 0.8
   $ Color white
-  $ rectangleWire (1600) (132)
+  $ Text "Game over"

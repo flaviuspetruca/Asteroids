@@ -42,6 +42,7 @@ data GameState -- TBD: scores :: [Int]
 data Player = MkPlayer { -- tbd
   pName :: Name,
   gameScore :: GameScore,
+  isMoving :: Bool,
   position :: Position,
   velocity :: Velocity,
   lives :: Lives,
@@ -85,7 +86,7 @@ fps :: Int
 fps = 60
 
 instance Show GameState where
-  show (MkGameState ks s(MkPlayer n gs pos vel l o oo) enemies a d st p sg) = show sg
+  show (MkGameState ks s(MkPlayer n gs im pos vel l o oo) enemies a d st p sg) = show sg
 
 instance Show Enemy where
   show (Asteroid s p o) = show p ++ show o
