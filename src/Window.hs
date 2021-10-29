@@ -17,8 +17,12 @@ import Graphics.Gloss.Interface.IO.Interact (Key(SpecialKey))
 
 import Struct
 
-mkPlayer :: Color -> Float -> Float -> Float -> Picture
-mkPlayer c x y o = translate x y $ rotate (360-o) $ color c  $ Polygon [(15, 0), (-15,10),(-10,0),(-15,-10),(15,0)]
+ship :: Picture 
+ship = Polygon [(17, 0), (-20,15),(-10,0),(-20,-15),(17,0)]
+
+mkPlayer :: Bool -> Color -> Float -> Float -> Float -> Picture
+mkPlayer im c x y o | im  = translate x y $ rotate (360-o) $ color c  $ pictures [ship, Polygon [(-19,7),(-35,0),(-19,-7)]]
+                    | otherwise = translate x y $ rotate (360-o) $ color c ship
 
 mkAsteroid :: Size -> StdGen -> (Enemy,StdGen)
 mkAsteroid size sg {- g@(MkGameState ks s (MkPlayer n gs pos vel l o oo) e a d st p sg) -}
@@ -59,14 +63,14 @@ outOfViewCoord (x,y) w h  | x > w/2   = (-w/2, y)
 movePlayer :: Float    -- ^ The number of seconds since last update
          -> GameState -- ^ The initial game state
          -> GameState -- ^ A new game state with an updated spaceship movement
-movePlayer seconds (MkGameState ks s (MkPlayer _ _ (x,y) vel l o oo) e b _ _ _ r) = newGame
-  where newGame | outOfViewBool (x,y) 1000 700  = MkGameState ks s (MkPlayer "Flavius" 0 (outOfViewCoord (x,y) 1000 700) vel l o oo) e b Easy True False r
-                | otherwise                     = MkGameState ks s (MkPlayer "Flavius" 0 (x,y) vel l o oo) e b Easy True False r
+movePlayer seconds (MkGameState ks s (MkPlayer _ gs im (x,y) vel l o oo) e b _ _ _ r) = newGame
+  where newGame | outOfViewBool (x,y) 1000 700  = MkGameState ks s (MkPlayer "Flavius" gs im (outOfViewCoord (x,y) 1000 700) vel l o oo) e b Easy True False r
+                | otherwise                     = MkGameState ks s (MkPlayer "Flavius" gs im (x,y) vel l o oo) e b Easy True False r
 
 bulletEnemyCollision :: GameState -> GameState
-bulletEnemyCollision g@(MkGameState ks sc (MkPlayer n gs (x,y) vel l o oo) es as d st pause r)
+bulletEnemyCollision g@(MkGameState ks sc (MkPlayer n gs im (x,y) vel l o oo) es as d st pause r)
  | null es || null as = g
- | otherwise = MkGameState ks sc (MkPlayer n gs (x,y) vel l o oo) newEs newAs d st pause r
+ | otherwise = MkGameState ks sc (MkPlayer n gs im (x,y) vel l o oo) newEs newAs d st pause r
   where newEs = [e | e@(Asteroid s p orA)<-es, (MkBullet op np orB _) <-as, collisionBE np p s]
         newAs = [a | (Asteroid s p orA)<-es, a@(MkBullet op np orB _) <-as, collisionBE np p s]
         collisionBE np p s  | distance2 np p > size s = True
