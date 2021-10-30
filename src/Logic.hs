@@ -5,7 +5,6 @@ import Data.List
 import Graphics.Gloss
 import Data.Number.CReal
 import Graphics.Gloss.Data.ViewPort
---import Graphics.Gloss.Interface.Pure.Game
 import Graphics.Gloss.Interface.Pure.Game
     ( Key(Char, SpecialKey, MouseButton),
       KeyState(Up, Down),
@@ -35,18 +34,19 @@ import Window
 -- | Convert a game state into a picture.
 render :: GameState -> Picture
 render (MkEnterName pics _) = pictures pics
-render (MkMainMenu pics _ _) = pictures pics
-render (MkHighScore pics _ _ _ _) = pictures pics
-render (MkGameState ks c (MkPlayer _ _ im (x,y) _ l o oo) en b _ _ _ _ )
-    | l > 0 = pictures (mkPlayer im white x y o:(enemies++bullets))
-    | otherwise = pictures [ color white $ Circle 20]
-    where enemies = map (createPicture white) en
-          bullets = map (\(MkBullet op (newX, newY) o _) -> translate newX newY $ rotate (360-o) $ color white $ ThickCircle 1.5 3) b
+render (MkMainMenu pics _ _ _) = pictures pics
+render (MkGameState ks c (MkPlayer _ gs im (x,y) _ l o oo) en b _ _ _ _ )
+    | l > 0 = pictures (scoreRender : gameRender)
+    | otherwise = pictures [deadText, makeText ("Score: " ++ (show gs)) (-260) (-40)]
+      where gameRender = (mkPlayer im white x y o:(enemies++bullets))
+            scoreRender = makeText (show gs) (-800) (200)
+            enemies = map (createPicture white) en
+            bullets = map (\(MkBullet op (newX, newY) o _) -> translate newX newY $ rotate (360-o) $ color white $ ThickCircle 1.5 3) b
 render (MkPauseMenu g pics) = pictures pics
 
 update :: Float -> GameState -> GameState
 update seconds (MkEnterName boxes name) = (MkEnterName boxes name)
-update seconds (MkMainMenu boxes name score) = (MkMainMenu boxes name score)
+update seconds (MkMainMenu boxes name score _) = (MkMainMenu boxes name score False)
 update seconds (MkHighScore boxes name score inGame g) = (MkHighScore boxes name score inGame g)
 update seconds (MkPauseMenu g boxes) = (MkPauseMenu g boxes)
 update sec g@(MkGameState _ _ _ [] _ _ _ _ r) = g {enemies= fst $ mkAsteroids 5 r}
@@ -93,6 +93,7 @@ update sec g@(MkGameState ks c (MkPlayer n gs im (x,y) vel l o oo) e a d st p r)
     = if vel > 0
         then movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs False (cgPlPos oo) (acc vel (-0.07)) updatedLives (newOr o (-3)) oo) npe (npb a) d st p r)
         else movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs False (cgPlPos oo) vel updatedLives (newOr o (-3)) oo) npe (npb a) d st p r)
+  | l == 0 = (MkMainMenu menuBox n gs True)
   | otherwise = movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs False (cgPlPos oo) (acc vel (-0.07)) updatedLives o oo) npe (npb a) d st p r)
   where
       newOr :: Float -> Float -> Float
@@ -215,13 +216,13 @@ newPos (x,y) o v  | v == 0 = (x,y)
 
 handleKeys :: Event -> GameState -> GameState
 handleKeys (EventKey (SpecialKey KeyEnter) _ _ _) en@(MkEnterName boxes currName)
-  | length currName > 0 = (MkMainMenu updatedBoxes currName 0)
+  | length currName > 0 = (MkMainMenu updatedBoxes currName 0 False)
   | otherwise = (MkEnterName boxes currName)
-  where updatedBoxes = makeText currName (-460) (40) : menuBox
+  where updatedBoxes = makeText (show 0) (460) (40) : makeText currName (-460) (40) : menuBox
 
 handleKeys (EventKey (SpecialKey KeyEnter) _ _ _) (MkHighScore boxes currName score inGame g)
   | inGame = (MkPauseMenu g pauseBox)
-  | otherwise = (MkMainMenu updatedMenu currName score)
+  | otherwise = (MkMainMenu updatedMenu currName score False)
   where updatedMenu = makeText currName (-460) (40) : menuBox
 
 handleKeys (EventKey (Char '\b') Down _ _) (MkEnterName boxes currName)
@@ -235,12 +236,12 @@ handleKeys (EventKey (Char '\b') Down _ _) (MkEnterName boxes currName)
 handleKeys (EventKey (Char ch) Down _ _) (MkEnterName boxes currName)
   = (MkEnterName updatedBoxes updatedName)
   where updatedName
-          | length currName < 12 && ch /= '\b' = currName ++ [ch]
+          | length currName < 12 && ch /= '\b' && ch /= ':' = currName ++ [ch]
           | otherwise = currName
         updatedBoxes = makeText updatedName (namePos) (-40) : enterBox
         namePos = (-60) - fromIntegral (length (currName) * 15)
 
-handleKeys (EventKey (MouseButton LeftButton) Down _ mousePos) mm@(MkMainMenu boxes currName score)
+handleKeys (EventKey (MouseButton LeftButton) Down _ mousePos) mm@(MkMainMenu boxes currName score _)
   | x > (-460) && x < 500 && y > (-60) && y < 20 = game
   | x > (-460) && x < 500 && y > (-142) && y < (-62) = (MkHighScore currScore currName score False mm)
   | x > (-460) && x < 500 && y > (-224) && y < (-144) = (MkQuitGame)
@@ -277,10 +278,9 @@ handleKeys (EventKey (Char 'p') Down _ _) (MkPauseMenu g boxes)
 handleKeys (EventKey (MouseButton LeftButton) Down _ mousePos) pm@(MkPauseMenu game@(MkGameState ks cnt player@(MkPlayer n gs im (x,y) vel l o oo) e a d st p r) boxes)
   | x' > (-460) && x' < 500 && y' > (-60) && y' < 20 = game
   | x' > (-460) && x' < 500 && y' > (-142) && y' < (-62) = (MkHighScore currScore n gs True game) -- TBD
-  | x' > (-460) && x' < 500 && y' > (-224) && y' < (-144) = (MkMainMenu updatedBoxes n gs)
+  | x' > (-460) && x' < 500 && y' > (-224) && y' < (-144) = (MkMainMenu updatedBoxes n 0 False)
   | otherwise = pm
     where (x', y') = mousePos
           currScore = [(makeScore n gs), (makeText "Press Enter to go back" (-240) (-80))]
-          updatedBoxes = makeText n (-460) (40) : menuBox
+          updatedBoxes = makeText (show 0) (460) (40) : makeText n (-460) (40) : menuBox
 handleKeys _ game = game
-

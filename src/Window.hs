@@ -72,9 +72,10 @@ outOfViewCoord (x,y) w h  | x > w/2   = (-w/2, y)
 movePlayer :: Float    -- ^ The number of seconds since last update
          -> GameState -- ^ The initial game state
          -> GameState -- ^ A new game state with an updated spaceship movement
-movePlayer seconds (MkGameState ks c (MkPlayer _ gs im (x,y) vel l o oo) e b _ _ _ r) = newGame
-  where newGame | outOfViewBool (x,y) 1000 700  = MkGameState ks c (MkPlayer "Flavius" gs im (outOfViewCoord (x,y) 1000 700) vel l o oo) e b Easy True False r
-                | otherwise                     = MkGameState ks c (MkPlayer "Flavius" gs im (x,y) vel l o oo) e b Easy True False r
+
+movePlayer seconds (MkGameState ks c (MkPlayer n gs im (x,y) vel l o oo) e b _ _ _ r) = newGame
+  where newGame | outOfViewBool (x,y) 1000 700  = MkGameState ks c (MkPlayer n gs im (outOfViewCoord (x,y) 1000 700) vel l o oo) e b Easy True False r
+                | otherwise                     = MkGameState ks c (MkPlayer n gs im (x,y) vel l o oo) e b Easy True False r
 
 bulletEnemyCollision :: GameState -> GameState
 bulletEnemyCollision g@(MkGameState ks c(MkPlayer n gs im (x,y) vel l o oo) es as d st pause r)
