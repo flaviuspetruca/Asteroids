@@ -38,6 +38,7 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , directory
     , gjk
     , gloss
     , numbers
@@ -54,6 +55,7 @@ executable Asteroids-exe
   build-depends:
       Asteroids
     , base >=4.7 && <5
+    , directory
     , gjk
     , gloss
     , numbers
@@ -71,6 +73,7 @@ test-suite Asteroids-test
   build-depends:
       Asteroids
     , base >=4.7 && <5
+    , directory
     , gjk
     , gloss
     , numbers

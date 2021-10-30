@@ -10,35 +10,37 @@ import System.Random
 import GJK.Collision
 import GJK.Support
 
-data GameState -- TBD: scores :: [Int]
+data GameState
   = MkEnterName
     { textBoxes :: [Picture],
       name :: String }
   | MkMainMenu -- TBD: encapsulate EnterName
     { textBoxes :: [Picture],
       name :: String,
-      score :: Int }
-  | MkHighScore -- TBD: make Player early, save top score
+      score :: Int,
+      finished :: Bool }
+  | MkHighScore 
     { textBoxes :: [Picture],
       name :: String,
       score :: Int,
       inGame :: Bool,
       game :: GameState }
   | MkGameState 
-    { keys :: [Key], -- tbd
-      player :: Player, -- tbd
-      enemies :: [Enemy], -- tbd
-      allArtilery :: [Bullet], -- tbd
-      difficulty :: Difficulty, -- tbd
+    { keys :: [Key], 
+      counter :: Int,
+      player :: Player, 
+      enemies :: [Enemy], 
+      allArtilery :: [Bullet], 
+      difficulty :: Difficulty, 
       started :: Bool,
       paused :: Bool,
-      sg :: StdGen } -- tbd
+      sg :: StdGen } 
   | MkPauseMenu
     { game :: GameState,
       textBoxes :: [Picture] }
   | MkQuitGame
 
-data Player = MkPlayer { -- tbd
+data Player = MkPlayer { 
   pName :: Name,
   gameScore :: GameScore,
   isMoving :: Bool,
@@ -85,7 +87,7 @@ fps :: Int
 fps = 60
 
 instance Show GameState where
-  show (MkGameState ks (MkPlayer n gs im pos vel l o oo) enemies a d st p sg) = show sg
+  show (MkGameState ks c (MkPlayer n gs im pos vel l o oo) enemies a d st p sg) = show sg
 
 instance Show Enemy where
   show (Asteroid s p o) = show p ++ show o

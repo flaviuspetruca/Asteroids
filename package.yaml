@@ -25,6 +25,7 @@ dependencies:
 - numbers
 - random
 - gjk
+- directory
 
 library:
   source-dirs: src

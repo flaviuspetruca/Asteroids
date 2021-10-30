@@ -20,13 +20,22 @@ import Struct
 ship :: Picture 
 ship = Polygon [(17, 0), (-20,15),(-10,0),(-20,-15),(17,0)]
 
+spaceship :: Float -> Picture 
+spaceship ss = pictures [Line[(10*ss, 0), (5*ss,-3*ss),(-5*ss,-3*ss),(-10*ss,0),(10*ss,0)],
+                      Line [(-10*ss, 0), (-5*ss,3*ss),(5*ss,3*ss),(10*ss,0),(-10*ss,0)],
+                      Line [(-3.5*ss, 6*ss), (-5*ss,3*ss),(5*ss,3*ss),(3.5*ss,6*ss),(-3.5*ss,6*ss)]]
+
+asteroid :: (Size->Float) -> Size -> Picture
+asteroid f s = Polygon [(-20*f s, 20*f s),(35*f s,0*f s),(20*f s,20*f s),(-15*f s,-15*f s),(15*f s,-15*f s)]
+
 mkPlayer :: Bool -> Color -> Float -> Float -> Float -> Picture
 mkPlayer im c x y o | im  = translate x y $ rotate (360-o) $ color c  $ pictures [ship, Polygon [(-19,7),(-35,0),(-19,-7)]]
                     | otherwise = translate x y $ rotate (360-o) $ color c ship
 
-mkAsteroid :: Size -> StdGen -> (Enemy,StdGen)
-mkAsteroid size sg {- g@(MkGameState ks s (MkPlayer n gs pos vel l o oo) e a d st p sg) -}
- = (Asteroid size (rx1,ry2) ro, sg3)
+mkEnemy :: Size -> Char -> StdGen -> (Enemy,StdGen)
+mkEnemy size c sg {- g@(MkGameState ks s (MkPlayer n gs pos vel l o oo) e a d st p sg) -}
+ | c == 'a'     = (Asteroid   size (rx1,ry2) ro, sg3)
+ | otherwise  = (Spaceship  size (rx1, ry2) 0, sg3) 
  where  (rx1, sg1)  = randomR (-450,450) sg
         (ry2, sg2)  = randomR (-300,300) sg1
         (ro, sg3)   = randomR (0,360) sg2
@@ -34,12 +43,12 @@ mkAsteroid size sg {- g@(MkGameState ks s (MkPlayer n gs pos vel l o oo) e a d s
 mkAsteroids :: Int -> StdGen -> ([Enemy],StdGen)
 mkAsteroids 0 sg = ([],sg)
 mkAsteroids n sg = (ast : fst (mkAsteroids (n-1) newSg), snd(mkAsteroids (n-1) newSg))
-  where (ast, newSg) = mkAsteroid Large sg
+  where (ast, newSg) = mkEnemy Large 'a' sg
 
 createPicture :: Color -> Enemy -> Picture
 createPicture c = f
-  where f (Asteroid s (x2,y2) o2) = translate x2 y2 $ rotate(360-o2) $ color c $ Polygon [(-20*size s, 20*size s),(35*size s,0*size s),(20*size s,20*size s),(-15*size s,-15*size s),(15*size s,-15*size s)]
-        f (Spaceship s (x2,y2) o2) = translate x2 y2 $ rotate(360-o2) $ color c $ Circle 200
+  where f (Asteroid s (x2,y2) o2) = translate x2 y2 $ rotate(360-o2) $ color c $ asteroid size s
+        f (Spaceship s (x2,y2) o2) = translate x2 y2 $ color c $ spaceship (size s*1.5)
         size :: Size -> Float
         size s  | s == Large = 2
                 | s == Med = 1.1
@@ -64,14 +73,14 @@ movePlayer :: Float    -- ^ The number of seconds since last update
          -> GameState -- ^ The initial game state
          -> GameState -- ^ A new game state with an updated spaceship movement
 
-movePlayer seconds (MkGameState ks (MkPlayer n gs im (x,y) vel l o oo) e b _ _ _ r) = newGame
-  where newGame | outOfViewBool (x,y) 1000 700  = MkGameState ks (MkPlayer n gs im (outOfViewCoord (x,y) 1000 700) vel l o oo) e b Easy True False r
-                | otherwise                     = MkGameState ks (MkPlayer n gs im (x,y) vel l o oo) e b Easy True False r
+movePlayer seconds (MkGameState ks c (MkPlayer n gs im (x,y) vel l o oo) e b _ _ _ r) = newGame
+  where newGame | outOfViewBool (x,y) 1000 700  = MkGameState ks c (MkPlayer n gs im (outOfViewCoord (x,y) 1000 700) vel l o oo) e b Easy True False r
+                | otherwise                     = MkGameState ks c (MkPlayer n gs im (x,y) vel l o oo) e b Easy True False r
 
 bulletEnemyCollision :: GameState -> GameState
-bulletEnemyCollision g@(MkGameState ks (MkPlayer n gs im (x,y) vel l o oo) es as d st pause r)
+bulletEnemyCollision g@(MkGameState ks c(MkPlayer n gs im (x,y) vel l o oo) es as d st pause r)
  | null es || null as = g
- | otherwise = MkGameState ks (MkPlayer n gs im (x,y) vel l o oo) newEs newAs d st pause r
+ | otherwise = MkGameState ks c (MkPlayer n gs im (x,y) vel l o oo) newEs newAs d st pause r
   where newEs = [e | e@(Asteroid s p orA)<-es, (MkBullet op np orB _) <-as, collisionBE np p s]
         newAs = [a | (Asteroid s p orA)<-es, a@(MkBullet op np orB _) <-as, collisionBE np p s]
         collisionBE np p s  | distance2 np p > size s = True

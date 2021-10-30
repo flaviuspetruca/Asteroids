@@ -10,6 +10,16 @@ enterBox = [enterText, enterBorder]
 menuBox = [startText, startBorder, scoreText, scoreBorder, quitText, quitBorder]
 pauseBox = [resumeText, resumeBorder, scoreText, scoreBorder, quitText, quitBorder]
 
+-- Potential foldr/foldl application?
+paintPicture :: [String] -> Float -> Float -> Picture -> Picture
+paintPicture [] _ _ pic = pictures [pic, (makeText "Press Enter to go back" (-400) (-400))]
+paintPicture (name:names) x startY pic
+  = pictures [pic, (makeText name x startY), (paintPicture names x nextY pic)]
+    where nextY = (startY - 80)
+
+emptyPic :: Picture
+emptyPic = makeText "" 0 0
+
 makeText :: String -> Float -> Float -> Picture
 makeText name x y
   = Translate x y
@@ -19,7 +29,7 @@ makeText name x y
 
 makeScore :: String -> Int -> Picture
 makeScore name score 
-  = Translate (-240) (40) -- TBD
+  = Translate (-240) (40)
   $ Scale 0.5 0.5
   $ Color white
   $ Text (show (name ++ ": " ++ (show score)))
@@ -35,8 +45,6 @@ enterBorder
   $ Scale 0.6 0.6
   $ Color blue
   $ rectangleWire (1600) (132)
-
--- data TextBox
 
 startText
   = Translate (-160) (-40)

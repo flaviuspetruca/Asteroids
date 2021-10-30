@@ -8,17 +8,13 @@ import Window
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import Graphics.Gloss.Interface.Pure.Game
---import Graphics.Gloss.Interface.IO.Game
---    ( Key(Char, SpecialKey, MouseButton),
---      KeyState(Up, Down),
---      SpecialKey(KeySpace, KeyEnter, KeyBackspace),
---      Event(EventKey),
---      MouseButton (LeftButton) )
 import System.Random
+import System.Directory
 import Control.Monad
 
 main = playIO window background fps initState handleRender handleEvent handleUpdate
---main = playIO window background fps initialMenuState renderIO 
+
+initState = MkEnterName enterBox ""
 
 handleRender :: GameState -> IO Picture
 handleRender hs@(MkHighScore _ _ _ _ _) = do getHistory hs
@@ -30,64 +26,66 @@ handleEvent event g
        pure event'
 
 handleUpdate :: Float -> GameState -> IO GameState
-handleUpdate sec g@(MkGameState _ (MkPlayer _ _ _ _ _ 0 _ _) _ _ _ _ _ _)
-  = do writeHistory g
-       let g' = update sec g
-       pure g'
+handleUpdate sec mm@(MkMainMenu _ name score True)
+  = do writeHistory mm
+       let mm' = update sec mm
+       pure mm'
 handleUpdate sec m = pure (update sec m)
 
 writeHistory :: GameState -> IO ()
-writeHistory g@(MkGameState _ (MkPlayer name score _ _ _ 0 _ _) _ _ _ _ _ _)
-  = do let filepath = "/home/martin/indie/uni/fp/Asteroids/highscores.txt"
-       putStrLn "is this invoked multiple times?"
-       highscore <- compareToFile (name ++ ": ") score filepath
-       when highscore $ do appendFile filepath ((name ++ ": ") ++ (show score) ++ ("\n"))
+writeHistory (MkMainMenu _ name score True)
+  = do let filepath = "highscores.txt"
+       fileExist <- doesFileExist filepath
+       if not fileExist then writeFile filepath "" else pure ()
+       content <- readFile filepath
+       () <- pure (foldr seq () content)
+       let contents = lines content
+       let highscore = checkScore name score contents
+       writeFile filepath highscore
 
 getHistory :: GameState -> IO Picture
 getHistory m@(MkHighScore _ name score _ _)
-  = do let filepath = "/home/martin/indie/uni/fp/Asteroids/highscores.txt"
+  = do let filepath = "highscores.txt"
+       fileExist <- doesFileExist filepath
+       if not fileExist then writeFile filepath "" else pure ()
        content <- readFile filepath
        () <- pure (foldr seq () content)
-       history <- pure (makeText content (240) (40))
+       let contents = lines content
+       history <- pure (paintPicture contents (-200) (400) emptyPic)
        pure history
 
-compareToFile :: String -> Int -> String -> IO Bool
-compareToFile name score filepath
-  = do content <- readFile filepath
-       () <- pure (foldr seq () content)
-       let contents = lines content
-       --putStr content
-       pure $ checkScore name score contents
-
-checkScore :: String -> Int -> [String] -> Bool
-checkScore name score [] = True
-checkScore name score (content:contents)
-  | length content == 0 = True -- "" case
-  | score > oldScore = True
-  | otherwise = checkScore name score contents
-    where content' = words content
-          oldName = head content'
-          oldScore = (read . head . tail) content'
-
-
-initState = MkEnterName enterBox ""
-
--- compareToFile :: String -> IO Bool
--- compareToFile s = checkScore s <$> readFile "my-file.txt"
-
--- handleEvent :: Event -> GameState -> IO GameState
--- handleEvent event state = do
--- let state' = handleKeys event state
--- makeFile state'
--- pure state'
+-- true if:
+-- (1) less than 10 spots occupied
+-- (2) if 10 spots but one has lesser score
 --
--- makeFile :: GameState -> IO ()
+-- contents = ["martin: 356","marty: 949"]
+-- content = "martin: 356"
+-- content' = ["martin:", "356"]
 --
--- main = playIO
---  mode
---  color
---  fps
---  initState
---  (pure . displayWorld)
---  handleEvent
---  (\dt world -> pure $ stepWrodl dt world)
+-- when true:
+-- (1) insert new score
+-- (2) push rest of scores one notch down
+--
+-- example:
+-- 1. marty: 394
+-- 2. troy: 93
+-- 3. axel: 90
+-- ...
+-- 10. bob: 30
+--
+-- newScore = egil: 150
+
+checkScore :: String -> Int -> [String] -> String
+checkScore name score [] = name ++ ": " ++ (show score) ++ "\n"
+checkScore name score contents
+  | length lesserIdx > 0 = newContents
+  | length contents < 10 = concat (reverse (newScore : (reverse contents')))
+  | otherwise = concat contents'
+    where newScore = name ++ ": " ++ (show score) ++ "\n"
+          lesserIdx = [idx | (idx,x) <- zip [0..] contents, let x' = words x,
+                       let oldScore = (read . head . tail) x', score > oldScore]
+          pos = head lesserIdx
+          contents' = map (++ "\n") contents
+          newContents = concat (take 10 (take pos contents' ++ [newScore] ++ drop pos contents'))
+
+
