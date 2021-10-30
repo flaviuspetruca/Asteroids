@@ -26,7 +26,6 @@ data GameState -- TBD: scores :: [Int]
       game :: GameState }
   | MkGameState 
     { keys :: [Key], -- tbd
-      score :: GameScore, -- tbd
       player :: Player, -- tbd
       enemies :: [Enemy], -- tbd
       allArtilery :: [Bullet], -- tbd
@@ -86,7 +85,7 @@ fps :: Int
 fps = 60
 
 instance Show GameState where
-  show (MkGameState ks s(MkPlayer n gs im pos vel l o oo) enemies a d st p sg) = show sg
+  show (MkGameState ks (MkPlayer n gs im pos vel l o oo) enemies a d st p sg) = show sg
 
 instance Show Enemy where
   show (Asteroid s p o) = show p ++ show o

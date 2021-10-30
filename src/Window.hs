@@ -63,14 +63,15 @@ outOfViewCoord (x,y) w h  | x > w/2   = (-w/2, y)
 movePlayer :: Float    -- ^ The number of seconds since last update
          -> GameState -- ^ The initial game state
          -> GameState -- ^ A new game state with an updated spaceship movement
-movePlayer seconds (MkGameState ks s (MkPlayer n gs im (x,y) vel l o oo) e b _ _ _ r) = newGame
-  where newGame | outOfViewBool (x,y) 1000 700  = MkGameState ks s (MkPlayer n gs im (outOfViewCoord (x,y) 1000 700) vel l o oo) e b Easy True False r
-                | otherwise                     = MkGameState ks s (MkPlayer n gs im (x,y) vel l o oo) e b Easy True False r
+
+movePlayer seconds (MkGameState ks (MkPlayer n gs im (x,y) vel l o oo) e b _ _ _ r) = newGame
+  where newGame | outOfViewBool (x,y) 1000 700  = MkGameState ks (MkPlayer n gs im (outOfViewCoord (x,y) 1000 700) vel l o oo) e b Easy True False r
+                | otherwise                     = MkGameState ks (MkPlayer n gs im (x,y) vel l o oo) e b Easy True False r
 
 bulletEnemyCollision :: GameState -> GameState
-bulletEnemyCollision g@(MkGameState ks sc (MkPlayer n gs im (x,y) vel l o oo) es as d st pause r)
+bulletEnemyCollision g@(MkGameState ks (MkPlayer n gs im (x,y) vel l o oo) es as d st pause r)
  | null es || null as = g
- | otherwise = MkGameState ks sc (MkPlayer n gs im (x,y) vel l o oo) newEs newAs d st pause r
+ | otherwise = MkGameState ks (MkPlayer n gs im (x,y) vel l o oo) newEs newAs d st pause r
   where newEs = [e | e@(Asteroid s p orA)<-es, (MkBullet op np orB _) <-as, collisionBE np p s]
         newAs = [a | (Asteroid s p orA)<-es, a@(MkBullet op np orB _) <-as, collisionBE np p s]
         collisionBE np p s  | distance2 np p > size s = True
@@ -89,8 +90,8 @@ distance2 (x1 , y1) (x2 , y2) = sqrt (x'*x' + y'*y')
     where x' = x1 - x2
           y' = y1 - y2
 
-acceleration :: Velocity -> Velocity -> Velocity
-acceleration vel newVel | newVel < 0 && (vel + newVel) >= 0   = vel + newVel
+acc :: Velocity -> Velocity -> Velocity
+acc vel newVel | newVel < 0 && (vel + newVel) >= 0   = vel + newVel
                         | newVel < 0 && vel + newVel < 0      = 0
                         | vel + newVel >= 5                   = 5
                         | otherwise                           = vel + newVel
