@@ -122,8 +122,8 @@ update sec g@(MkGameState ks c (MkPlayer n gs im (x,y) vel l o oo) e a d st p r)
                                                       () | c `mod` 300 == 0  -> Spaceship s (newPos p (newOr or rO) enemVel) (newOr or rO)
                                                          | otherwise        -> Spaceship s (newPos p or enemVel) or
 
-              rO = list!!fst (randomR (0,16) r)
-              list = [-315, -270, -225, -180, -135, -90, -45, 0 ,45, 90, 135, 180, 225, 270, 315, 360]
+              rO = list!!fst (randomR (0,15) r)
+              list = [-315, -270, -225, -180, -135, -90, -45, 0 ,45, 90, 135, 180, 225, 270, 315]
 
               enemVel | s == Large  = 2.5
                       | s == Med    = 4
