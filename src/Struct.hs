@@ -10,36 +10,37 @@ import System.Random
 import GJK.Collision
 import GJK.Support
 
-data GameState -- TBD: scores :: [Int]
+data GameState
   = MkEnterName
     { textBoxes :: [Picture],
       name :: String }
   | MkMainMenu -- TBD: encapsulate EnterName
     { textBoxes :: [Picture],
       name :: String,
-      score :: Int }
-  | MkHighScore -- TBD: make Player early, save top score
+      score :: Int,
+      finished :: Bool }
+  | MkHighScore 
     { textBoxes :: [Picture],
       name :: String,
       score :: Int,
       inGame :: Bool,
       game :: GameState }
   | MkGameState 
-    { keys :: [Key], -- tbd
+    { keys :: [Key], 
       counter :: Int,
-      player :: Player, -- tbd
-      enemies :: [Enemy], -- tbd
-      allArtilery :: [Bullet], -- tbd
-      difficulty :: Difficulty, -- tbd
+      player :: Player, 
+      enemies :: [Enemy], 
+      allArtilery :: [Bullet], 
+      difficulty :: Difficulty, 
       started :: Bool,
       paused :: Bool,
-      sg :: StdGen } -- tbd
+      sg :: StdGen } 
   | MkPauseMenu
     { game :: GameState,
       textBoxes :: [Picture] }
   | MkQuitGame
 
-data Player = MkPlayer { -- tbd
+data Player = MkPlayer { 
   pName :: Name,
   gameScore :: GameScore,
   isMoving :: Bool,
