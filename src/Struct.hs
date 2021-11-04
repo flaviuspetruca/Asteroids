@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 module Struct where
 
 import Data.List
@@ -30,8 +31,9 @@ data GameState
       counter :: Int,
       player :: Player, 
       enemies :: [Enemy], 
-      allArtilery :: [Bullet], 
-      difficulty :: Difficulty, 
+      allArtilery :: [Bullet],
+      difficulty :: Difficulty,
+      hasDied :: Bool, 
       started :: Bool,
       paused :: Bool,
       sg :: StdGen } 
@@ -63,7 +65,7 @@ data Movement = MkMovement {
 
 data Enemy
   = Asteroid Size Position Orientation
-  | Spaceship Size Position Orientation
+  | Spaceship Size Position Orientation Bullet
 
 type Position = (Float, Float)
 type Name  = String
@@ -91,7 +93,7 @@ fps :: Int
 fps = 60
 
 instance Show GameState where
-  show (MkGameState ks c (MkPlayer n gs im pos vel l o oo) enemies a d st p sg) = show sg
+  show (MkGameState ks c (MkPlayer n gs im pos vel l o oo) enemies a d hd st p sg) = show sg
 
 instance Show Enemy where
   show (Asteroid s p o) = show p ++ show o

@@ -33,6 +33,7 @@ library
       Player
       Struct
       View
+      Window
   other-modules:
       Paths_Asteroids
   hs-source-dirs:

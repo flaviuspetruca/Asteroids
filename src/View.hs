@@ -27,13 +27,14 @@ import Game
 render :: GameState -> Picture
 render (MkEnterName pics _) = pictures pics
 render (MkMainMenu pics _ _ _) = pictures pics
-render (MkGameState ks c (MkPlayer _ gs im (x,y) _ l o oo) en b _ _ _ _ )
+render (MkGameState ks c (MkPlayer _ gs im (x,y) _ l o oo) en b _ hd _ _ _ )
     | l > 0 = pictures (scoreRender : gameRender)
     | otherwise = pictures [deadText, makeText ("Score: " ++ (show gs)) (-260) (-40)]
       where gameRender = (mkPlayer im white x y o:(enemies++bullets))
             scoreRender = makeText (show gs) (-800) (200)
             enemies = map (createPicture white) en
-            bullets = map (\(MkBullet op (newX, newY) o _) -> translate newX newY $ rotate (360-o) $ color white $ ThickCircle 1.5 3) b
+            bullets = map (\(MkBullet op (newX, newY) o _) -> translate newX newY $ rotate (360-o) $ color white $ ThickCircle 1.5 3) (b++eb)
+            eb = [b | (Spaceship _ _ _ b)<-en]
 render (MkPauseMenu g pics) = pictures pics
 render (MkGameOver n gs _)
   = pictures [deadText, nameScore, playAgain, replayBorder, backText, backBorder]
