@@ -25,13 +25,14 @@ source-repository head
 
 library
   exposed-modules:
+      Game
       Lib
       Logic
       Main
       Menu
       Player
       Struct
-      Window
+      View
   other-modules:
       Paths_Asteroids
   hs-source-dirs:
