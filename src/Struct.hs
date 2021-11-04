@@ -40,6 +40,10 @@ data GameState
   | MkPauseMenu
     { game :: GameState,
       textBoxes :: [Picture] }
+  | MkGameOver
+    { name :: String,
+      score :: Int,
+      counter :: Int }
   | MkQuitGame
 
 data Player = MkPlayer { 

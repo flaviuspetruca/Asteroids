@@ -1,4 +1,6 @@
 module Menu where
+-- MENU --
+-- For generating menu functionality.
 
 import Graphics.Gloss
 import Graphics.Gloss.Data.ViewPort
@@ -17,8 +19,15 @@ paintPicture (name:names) x startY pic
   = pictures [pic, (makeText name x startY), (paintPicture names x nextY pic)]
     where nextY = (startY - 80)
 
+--paintPicture :: [String] -> Float -> Float -> Picture -> Picture
+--paintPicture names x startY pic = foldr (\name acc -> let y = (y - 80) in (pictures [pic, (makeText name x y), acc])) pic names
+--  where y = startY
+
 emptyPic :: Picture
 emptyPic = makeText "" 0 0
+
+returnPic :: Picture
+returnPic = makeText "Press Enter to go back" (-400) (-400)
 
 makeText :: String -> Float -> Float -> Picture
 makeText name x y
@@ -99,3 +108,15 @@ deadText
   $ Scale 0.8 0.8
   $ Color white
   $ Text "Game over"
+
+replayBorder
+  = Translate (20) (-20)
+  $ Scale 0.6 0.6
+  $ Color blue
+  $ rectangleWire (1600) (132)
+
+backBorder
+  = Translate (20) (-100)
+  $ Scale 0.6 0.6
+  $ Color blue
+  $ rectangleWire (1600) (132)

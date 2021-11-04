@@ -1,10 +1,13 @@
 module Main where
+-- MAIN --
+-- For handling IO impurity as well as running the game.
 
 import Lib
 import Struct
 import Menu
 import Logic
-import Window
+import View
+import Game
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import Graphics.Gloss.Interface.Pure.Game
@@ -40,7 +43,7 @@ writeHistory (MkMainMenu _ name score True)
        content <- readFile filepath
        () <- pure (foldr seq () content)
        let contents = lines content
-       let highscore = checkScore name score contents
+       let highscore = updateScore name score contents
        writeFile filepath highscore
 
 getHistory :: GameState -> IO Picture
@@ -75,17 +78,17 @@ getHistory m@(MkHighScore _ name score _ _)
 --
 -- newScore = egil: 150
 
-checkScore :: String -> Int -> [String] -> String
-checkScore name score [] = name ++ ": " ++ (show score) ++ "\n"
-checkScore name score contents
+updateScore :: String -> Int -> [String] -> String
+updateScore name score [] = name ++ ": " ++ (show score) ++ "\n"
+updateScore name score contents
   | length lesserIdx > 0 = newContents
-  | length contents < 10 = concat (reverse (newScore : (reverse contents')))
+  | length contents < 10 = concat (contents' ++ [newScore])--(reverse (newScore : (reverse contents')))
   | otherwise = concat contents'
     where newScore = name ++ ": " ++ (show score) ++ "\n"
           lesserIdx = [idx | (idx,x) <- zip [0..] contents, let x' = words x,
                        let oldScore = (read . head . tail) x', score > oldScore]
           pos = head lesserIdx
           contents' = map (++ "\n") contents
-          newContents = concat (take 10 (take pos contents' ++ [newScore] ++ drop pos contents'))
+          newContents = (concat . take 10) (take pos contents' ++ [newScore] ++ drop pos contents')--(take 10 (take pos contents' ++ [newScore] ++ drop pos contents'))
 
 
