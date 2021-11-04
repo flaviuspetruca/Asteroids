@@ -202,7 +202,7 @@ update sec g@(MkGameState ks c (MkPlayer n gs im (x,y) vel l o oo) enemies a d h
                                           | otherwise                           -> gs + 1000
 
       notCollisionSsAs :: Enemy -> [Enemy] -> Bool
-      notCollisionSsAs _ [] = (True)
+      notCollisionSsAs _ [] = True
       notCollisionSsAs s@(Spaceship _ sp _ _) (e@(Asteroid size p orA):es)  | distance2 sp p < dBE size = False
                                                                             | otherwise = True && notCollisionSsAs s es 
       
