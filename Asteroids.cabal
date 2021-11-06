@@ -50,6 +50,7 @@ library
 executable Asteroids-exe
   main-is: Main.hs
   other-modules:
+      Input
       Paths_Asteroids
   hs-source-dirs:
       app

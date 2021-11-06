@@ -122,12 +122,14 @@ handleKeys :: Event -> GameState -> GameState
 handleKeys (EventKey (SpecialKey KeyEnter) _ _ _) en@(MkEnterName boxes currName)
   | length currName > 0 = MkMainMenu updatedBoxes currName 0 False
   | otherwise = MkEnterName boxes currName
-  where updatedBoxes = makeText (show 0) 460 40 : makeText currName (-460) 40 : menuBox
+  where updatedBoxes = makeText currName namePos 40 : menuBox --(-460) 40 : menuBox
+        namePos = (-60) - fromIntegral (length currName * 15)
 
 handleKeys (EventKey (SpecialKey KeyEnter) _ _ _) (MkHighScore _ currName score inGame g)
   | inGame = MkPauseMenu g pauseBox
   | otherwise = MkMainMenu updatedMenu currName score False
-  where updatedMenu = makeText currName (-460) 40 : menuBox
+  where updatedMenu = makeText currName namePos 40 : menuBox --(-460) 40 : menuBox
+        namePos = (-60) - fromIntegral (length currName * 15)
 
 handleKeys (EventKey (Char '\b') Down _ _) (MkEnterName boxes currName)
   = MkEnterName updatedBoxes updatedName
@@ -151,7 +153,8 @@ handleKeys (EventKey (MouseButton LeftButton) Down _ mousePos) mm@(MkMainMenu bo
     where updatedBoxes = makeText currName (-460) 80 : menuBox
           (x, y) = mousePos
           currScore = [makeScore currName score, makeText "Press Enter to go back" (-240) (-80)]
-          updatedPause = makeText currName (-460) 40 : pauseBox
+          updatedPause = makeText currName namePos 40 : pauseBox--(-460) 40 : pauseBox
+          namePos = (-60) - fromIntegral (length currName * 15)
           game = MkGameState [] 1 player enemies [] Easy (False,0) True False sg
           player = MkPlayer currName 0 False (0,0) 0.0 3 90 90
           enemies = fst (mkAsteroids 5 (0,0) (mkStdGen 2))
@@ -184,12 +187,14 @@ handleKeys (EventKey (MouseButton LeftButton) Down _ mousePos) pm@(MkPauseMenu g
   | otherwise = pm
     where (x', y') = mousePos
           currScore = [makeScore n gs, makeText "Press Enter to go back" (-240) (-80)]
-          updatedBoxes = makeText (show 0) 460 40 : makeText n (-460) 40 : menuBox
+          updatedBoxes = makeText n namePos 40 : menuBox --(-460) 40 : menuBox
+          namePos = (-60) - fromIntegral (length n * 15)
 handleKeys (EventKey (MouseButton LeftButton) Down _ mousePos) (MkGameOver n gs c)
   | x > (-460) && x < 500 && y > (-60) && y < 20 = newGame
   | x > (-460) && x < 500 && y > (-142) && y < (-62) = MkMainMenu boxes n gs True
   where (x, y) = mousePos
-        boxes = makeText n (-460) 80 : menuBox
+        boxes = makeText n namePos 40 : menuBox --(-460) 80 : menuBox
+        namePos = (-60) - fromIntegral (length n * 15)
         newGame = MkGameState [] 1 player enemies [] Easy (False,1) True False sg
         player = MkPlayer n 0 False (0,0) 0.0 3 90 90
         enemies = fst (mkAsteroids 5 (0,0) (mkStdGen 2))
