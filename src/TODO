@@ -3,7 +3,7 @@
 [X] Integrate pause menu into gamestate
 [X] Refactor constructor approach into boolean approach when possible
 [ ] Refactor default boxes to avoid constantly generating new pictures
-[ ] Fix bug where game over screen renders early without the game really being over
+[X] Fix bug where game over screen renders early without the game really being over
 [X] Create View.hs for rendering
 [ ] Attempt to replace recursion with higher-order functions
 [ ] Look for the opportunity to create a data Menu
@@ -14,6 +14,6 @@
 [X] Double reverse concat -> ++ append concat
 [X] Try to concat . take 10 in newContents
 [ ] Make game quit properly instead of bad render
-[ ] Stabilize game over screen
+[X] Stabilize game over screen
 [ ] Remove hardcoded values by using getScreenSize
-[ ] unlines instead of concat 
+[X] unlines instead of concat 

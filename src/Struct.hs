@@ -1,11 +1,13 @@
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 module Struct where
+-- Game architecture including data types, aliases and constants.
 
 import Data.List
 import Graphics.Gloss
 import Data.Number.CReal
 import Graphics.Gloss.Data.ViewPort
 import Graphics.Gloss.Interface.Pure.Game
+import Graphics.Gloss.Interface.Environment
 import qualified GHC.Base as S
 import System.Random
 import GJK.Collision

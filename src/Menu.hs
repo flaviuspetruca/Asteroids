@@ -5,6 +5,7 @@ module Menu where
 import Graphics.Gloss
 import Graphics.Gloss.Data.ViewPort
 import Graphics.Gloss.Interface.Pure.Game
+import Graphics.Gloss.Interface.Environment
 
 import Struct
 
@@ -14,7 +15,7 @@ pauseBox = [resumeText, resumeBorder, scoreText, scoreBorder, quitText, quitBord
 
 -- Potential foldr/foldl application?
 paintPicture :: [String] -> Float -> Float -> Picture -> Picture
-paintPicture [] _ _ pic = pictures [pic, (makeText "Press Enter to go back" (-400) (-400))]
+paintPicture [] x y pic = pictures [pic, (makeText "Press Enter to go back" (x-200) (y-80))]
 paintPicture (name:names) x startY pic
   = pictures [pic, (makeText name x startY), (paintPicture names x nextY pic)]
     where nextY = (startY - 80)
