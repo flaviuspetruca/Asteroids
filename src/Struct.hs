@@ -33,13 +33,17 @@ data GameState
       enemies :: [Enemy], 
       allArtilery :: [Bullet],
       difficulty :: Difficulty,
-      hasDied :: Bool, 
+      hasDied :: (Bool,Int), 
       started :: Bool,
       paused :: Bool,
       sg :: StdGen } 
   | MkPauseMenu
     { game :: GameState,
       textBoxes :: [Picture] }
+  | MkGameOver
+    { name :: String,
+      score :: Int,
+      counter :: Int }
   | MkQuitGame
 
 data Player = MkPlayer { 
