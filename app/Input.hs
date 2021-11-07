@@ -23,15 +23,15 @@ gameScreen (MkGameState ks c (MkPlayer _ gs im _ _ 0 o oo) en b _ hd _ _ _ )
        let (width, height) = ((middle x), (middle y))
        let (left, right) = ( (0 - width), width )
        let (top, bottom) = ( height, (0 - height) )
-       pure (pictures [deadText, makeText ("Score: " ++ show gs) (-260) (-40)])
+       pure (pictures [deadText, makeText ("Score: " ++ show gs) (-260) (-40) 0.5])
 gameScreen (MkGameState ks c (MkPlayer _ gs im (x,y) _ l o oo) en b _ hd _ _ _ )
   = do (x'',y'') <- getScreenSize
        let (x',y') = ( (fromIntegral x''), (fromIntegral y'') )
        let (width, height) = ((middle x'), (middle y'))
        let (left, right) = ( (0 - width), width )
        let (top, bottom) = ( height, (0 - height) )
-       let gsText = makeText ("Score: " ++ show gs) (left+160) (top-80)
-       let lifeText = makeText ("Lives: " ++ show l) (left+160) (top-160)
+       let gsText = makeText ("Score: " ++ show gs) (left+160) (top-80) 0.5
+       let lifeText = makeText ("Lives: " ++ show l) (left+160) (top-160) 0.5
        if fst hd then
           if c `mod` 5 == 0 then do let player = mkPlayer im black x y o:(enemies++bullets)
                                     (pure . pictures) (player ++ [gsText, lifeText])
@@ -52,8 +52,8 @@ addStatus (MkGameState ks c (MkPlayer _ gs im _ _ l o oo) en b _ hd _ _ _ )
        let (width, height) = ((middle x), (middle y))
        let (left, right) = ( (0 - width), width )
        let (top, bottom) = ( height, (0 - height) )
-       let gsText = makeText (show gs) (left+160) (top-80)
-       let lifeText = makeText (show l) (left+160) (top-160)
+       let gsText = makeText (show gs) (left+160) (top-80) 0.5
+       let lifeText = makeText (show l) (left+160) (top-160) 0.5
        pure (pictures [gsText, lifeText])
 
 writeHistory :: GameState -> IO ()
@@ -77,8 +77,10 @@ getHistory m@(MkHighScore _ name score _ _)
        (x',y') <- getScreenSize
        let (x,y) = ( (fromIntegral x'), (fromIntegral y') )
        let (width, height) = ((middle x), (middle y))
+       let (left, right) = ( (0 - width), width )
+       let (top, bottom) = ( height, (0 - height) )
        let contents = lines content
-       history <- pure (paintPicture contents (-200) (height-140) emptyPic)
+       history <- pure (pictures [ (paintPicture contents (-80) (height-140) emptyPic ), ( makeText "Press Enter to go back" (-240) (bottom+140) 0.3 ) ] )
        pure history
 
 -- true if:
