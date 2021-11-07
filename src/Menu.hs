@@ -15,25 +15,25 @@ pauseBox = [resumeText, resumeBorder, scoreText, scoreBorder, quitText, quitBord
 
 -- Potential foldr/foldl application?
 paintPicture :: [String] -> Float -> Float -> Picture -> Picture
-paintPicture [] x y pic = pictures [pic, (makeText "Press Enter to go back" (x-200) (y-80))]
+paintPicture [] x y pic = pic--pictures [pic, (makeText "Press Enter to go back" (x-200) (y-80) 0.3)]
 paintPicture (name:names) x startY pic
-  = pictures [pic, (makeText name x startY), (paintPicture names x nextY pic)]
-    where nextY = (startY - 80)
+  = pictures [pic, (makeText name x startY 0.3), (paintPicture names x nextY pic)]
+    where nextY = (startY - 40)
 
 --paintPicture :: [String] -> Float -> Float -> Picture -> Picture
 --paintPicture names x startY pic = foldr (\name acc -> let y = (y - 80) in (pictures [pic, (makeText name x y), acc])) pic names
 --  where y = startY
 
 emptyPic :: Picture
-emptyPic = makeText "" 0 0
+emptyPic = makeText "" 0 0 0.5
 
 returnPic :: Picture
-returnPic = makeText "Press Enter to go back" (-400) (-400)
+returnPic = makeText "Press Enter to go back" (-400) (-400) 0.3
 
-makeText :: String -> Float -> Float -> Picture
-makeText name x y
+makeText :: String -> Float -> Float -> Float -> Picture
+makeText name x y scale
   = Translate x y
-  $ Scale 0.5 0.5
+  $ Scale scale scale
   $ Color white
   $ Text name
 
