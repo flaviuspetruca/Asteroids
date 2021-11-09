@@ -13,6 +13,7 @@ import System.Random
 import GJK.Collision
 import GJK.Support
 
+-- All the different gamestates.
 data GameState
   = MkEnterName
     { textBoxes :: [Picture],
@@ -46,6 +47,7 @@ data GameState
       counter :: Int }
   | MkQuitGame
 
+-- The user-controlled player.
 data Player = MkPlayer { 
   pName :: Name,
   gameScore :: GameScore,
@@ -57,6 +59,7 @@ data Player = MkPlayer {
   oldOrientation :: Orientation
 }
 
+-- Enemies that may damage the player.
 data Enemy
   = Asteroid Size Position Orientation
   | Spaceship Size Position Orientation Bullet
@@ -78,14 +81,5 @@ window = FullScreen
 background :: Color
 background = black
 
-width, height, offset :: Int
-width = 900
-height = 600
-offset = 50
-
 fps :: Int
 fps = 60
-
-instance Show GameState where
-  show (MkGameState ks c (MkPlayer n gs im pos vel l o oo) enemies a d hd sg) = show sg
-

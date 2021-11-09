@@ -4,8 +4,6 @@ module Input where
 
 import Struct
 import Menu
-import Logic
-import View
 import Game
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
@@ -19,6 +17,8 @@ import Control.Monad
 -- Takes the quitting gamestate and returns a safe exit.
 quitScreen :: GameState -> IO Picture
 quitScreen (MkQuitGame) = do exitWith (ExitSuccess)
+
+middle x = x / 2
 
 -- Mostly pure render function that also requires impurity.
 -- getScreenSize is an impure function and is required to avoid resolution issues.

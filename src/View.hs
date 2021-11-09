@@ -34,6 +34,3 @@ render (MkGameOver n gs _)
     where nameScore = makeText ("Score: " ++ show gs) (-132)  200 0.5
           playAgain = makeText "Play again"           (-140) (-40) 0.5
           backText  = makeText "Back to menu"         (-200) (-120) 0.5
-
-middle :: Float -> Float
-middle x = x/2
