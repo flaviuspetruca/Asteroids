@@ -2,7 +2,6 @@ module Input where
 -- INPUT --
 -- For impure functions.
 
-import Lib
 import Struct
 import Menu
 import Logic
@@ -14,8 +13,15 @@ import Graphics.Gloss.Interface.Pure.Game
 import Graphics.Gloss.Interface.Environment
 import System.Random
 import System.Directory
+import System.Exit
 import Control.Monad
 
+-- Takes the quitting gamestate and returns a safe exit.
+quitScreen :: GameState -> IO Picture
+quitScreen (MkQuitGame) = do exitWith (ExitSuccess)
+
+-- Mostly pure render function that also requires impurity.
+-- getScreenSize is an impure function and is required to avoid resolution issues.
 gameScreen :: GameState -> IO Picture
 gameScreen (MkGameState ks c (MkPlayer _ gs im _ _ 0 o oo) en b _ hd _ _ _ )
   = do (x',y') <- getScreenSize
@@ -45,17 +51,7 @@ gameScreen (MkGameState ks c (MkPlayer _ gs im (x,y) _ l o oo) en b _ hd _ _ _ )
           bullets = map (\(MkBullet _ (newX, newY) o _) ->
                     translate newX newY $ rotate (360-o) $ color white $ ThickCircle 1.5 3) (b++eb)
 
-addStatus :: GameState -> IO Picture
-addStatus (MkGameState ks c (MkPlayer _ gs im _ _ l o oo) en b _ hd _ _ _ )
-  = do (x',y') <- getScreenSize
-       let (x,y) = ( (fromIntegral x'), (fromIntegral y') )
-       let (width, height) = ((middle x), (middle y))
-       let (left, right) = ( (0 - width), width )
-       let (top, bottom) = ( height, (0 - height) )
-       let gsText = makeText (show gs) (left+160) (top-80) 0.5
-       let lifeText = makeText (show l) (left+160) (top-160) 0.5
-       pure (pictures [gsText, lifeText])
-
+-- 
 writeHistory :: GameState -> IO ()
 writeHistory (MkMainMenu _ name score True)
   = do let filepath = "highscores.txt"
@@ -83,14 +79,10 @@ getHistory m@(MkHighScore _ name score _ _)
        history <- pure (pictures [ (paintPicture contents (-80) (height-140) emptyPic ), ( makeText "Press Enter to go back" (-240) (bottom+140) 0.3 ) ] )
        pure history
 
+-- updateScore --
 -- true if:
 -- (1) less than 10 spots occupied
 -- (2) if 10 spots but one has lesser score
---
--- contents = ["martin: 356","marty: 949"]
--- content = "martin: 356"
--- content' = ["martin:", "356"]
--- unlines contents = "martin: 356\nBob: 99"
 --
 -- when true:
 -- (1) insert new score

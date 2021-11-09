@@ -3,7 +3,6 @@ module Main where
 -- For handling IO impurity as well as running the game.
 -- See Input.hs for impure helper functions.
 
-import Lib
 import Struct
 import Input
 import Menu
@@ -24,6 +23,7 @@ initState = MkEnterName enterBox ""
 handleRender :: GameState -> IO Picture
 handleRender hs@(MkHighScore _ _ _ _ _) = do getHistory hs
 handleRender g@(MkGameState _ _ _ _ _ _ _ _ _ _ ) = do gameScreen g
+handleRender q@(MkQuitGame) = do quitScreen q
 handleRender g = do let g' = render g
                     pure g'
 
