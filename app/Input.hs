@@ -52,8 +52,9 @@ gameScreen (MkGameState ks c (MkPlayer _ gs im (x,y) _ l o oo) en b _ hd _ )
                     translate newX newY $ rotate (360-o) $ color white $ ThickCircle 1.5 3) (b++eb)
 
 -- Writes a new version of highscores to file.
+--writeHistory (MkMainMenu _ name score True)
 writeHistory :: GameState -> IO ()
-writeHistory (MkMainMenu _ name score True)
+writeHistory (MkGameOver name score _ False)
   = do let filepath = "highscores.txt"
        fileExist <- doesFileExist filepath
        if not fileExist then writeFile filepath "" else pure ()

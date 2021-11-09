@@ -37,9 +37,10 @@ handleEvent event g
 -- IO wrapper for update function.
 -- When returning from a finished game,
 -- it always updates the highscores.
+--handleUpdate sec mm@(MkMainMenu _ name score True)
 handleUpdate :: Float -> GameState -> IO GameState
-handleUpdate sec mm@(MkMainMenu _ name score True)
-  = do writeHistory mm
-       let mm' = update sec mm
-       pure mm'
+handleUpdate sec g@(MkGameOver _ _ _ False)
+  = do writeHistory g
+       let g' = update sec g
+       pure g'
 handleUpdate sec m = pure (update sec m)

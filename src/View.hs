@@ -29,7 +29,7 @@ render :: GameState -> Picture
 render (MkEnterName pics _) = pictures pics
 render (MkMainMenu pics _ _ _) = pictures pics
 render (MkPauseMenu g pics) = pictures pics
-render (MkGameOver n gs _)
+render (MkGameOver n gs _ _)
   = pictures [deadText, nameScore, playAgain, replayBorder, backText, backBorder]
     where nameScore = makeText ("Score: " ++ show gs) (-132)  200 0.5
           playAgain = makeText "Play again"           (-140) (-40) 0.5

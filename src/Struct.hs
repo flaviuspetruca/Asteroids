@@ -44,7 +44,8 @@ data GameState
   | MkGameOver
     { name :: String,
       score :: Int,
-      counter :: Int }
+      counter :: Int,
+      written :: Bool }
   | MkQuitGame
 
 -- The user-controlled player.

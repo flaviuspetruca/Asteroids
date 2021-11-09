@@ -31,10 +31,10 @@ update sec (MkEnterName boxes name)                 = MkEnterName boxes name
 update sec (MkMainMenu boxes name score _)          = MkMainMenu  boxes name score False
 update sec (MkHighScore boxes name score inGame g)  = MkHighScore boxes name score inGame g
 update sec (MkPauseMenu g boxes)                    = MkPauseMenu g boxes
-update sec g@(MkGameOver _ _ _)                     = g
+update sec g@(MkGameOver n s c _)                   = MkGameOver n s c True
 update sec g@(MkGameState _ _ (MkPlayer _ _ _ (x,y) _ _ _ _) [] _ _ _ r) = g {enemies= fst $ mkAsteroids 5 (x,y) r}
 update sec g@(MkGameState ks c (MkPlayer n gs im (x,y) vel l o oo) enemies a d hd r)
-  | l == 0 = MkGameOver n gs 0
+  | l <= 0 = (MkGameOver n gs 0 False)
   | SpecialKey KeySpace `elem` ks && Char 'w' `elem` ks && Char 'd' `elem` ks = 
     case  () of
           () | oo/=o && vel > 0 -> movePlayer sec (MkGameState newKeys (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos oo c)) (acc vel (-0.03)) updatedLives (newOr o (-3.5)) (newOr o   3.5)) npe (npb bullets) d (snd(cgPlPos oo (snd hd))) r)
@@ -191,7 +191,7 @@ handleKeys (EventKey (MouseButton LeftButton) Down _ mousePos) pm@(MkPauseMenu g
           currScore = [makeScore n gs, makeText "Press Enter to go back" (-240) (-80) 0.5]
           updatedBoxes = makeText n namePos 40 0.5 : menuBox --(-460) 40 : menuBox
           namePos = (-60) - fromIntegral (length n * 15)
-handleKeys (EventKey (MouseButton LeftButton) Down _ mousePos) (MkGameOver n gs c)
+handleKeys (EventKey (MouseButton LeftButton) Down _ mousePos) (MkGameOver n gs c True)
   | x > (-460) && x < 500 && y > (-60) && y < 20 = newGame
   | x > (-460) && x < 500 && y > (-142) && y < (-62) = MkMainMenu boxes n gs True
   where (x, y) = mousePos
