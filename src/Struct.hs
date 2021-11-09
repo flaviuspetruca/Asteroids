@@ -35,9 +35,7 @@ data GameState
       enemies :: [Enemy], 
       allArtilery :: [Bullet],
       difficulty :: Difficulty,
-      hasDied :: (Bool,Int), 
-      started :: Bool,
-      paused :: Bool,
+      hasDied :: (Bool,Int),
       sg :: StdGen } 
   | MkPauseMenu
     { game :: GameState,
@@ -57,12 +55,6 @@ data Player = MkPlayer {
   lives :: Lives,
   orientation :: Orientation,
   oldOrientation :: Orientation
-}
-
-data Movement = MkMovement {
-  pos :: Position,
-  orient :: Orientation,
-  vel :: Velocity
 }
 
 data Enemy
@@ -95,9 +87,5 @@ fps :: Int
 fps = 60
 
 instance Show GameState where
-  show (MkGameState ks c (MkPlayer n gs im pos vel l o oo) enemies a d hd st p sg) = show sg
-
-instance Show Enemy where
-  show (Asteroid s p o) = show p ++ show o
-  show Spaceship {} = show 2
+  show (MkGameState ks c (MkPlayer n gs im pos vel l o oo) enemies a d hd sg) = show sg
 

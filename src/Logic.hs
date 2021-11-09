@@ -32,53 +32,53 @@ update sec (MkMainMenu boxes name score _)          = MkMainMenu  boxes name sco
 update sec (MkHighScore boxes name score inGame g)  = MkHighScore boxes name score inGame g
 update sec (MkPauseMenu g boxes)                    = MkPauseMenu g boxes
 update sec g@(MkGameOver _ _ _)                     = g
-update sec g@(MkGameState _ _ (MkPlayer _ _ _ (x,y) _ _ _ _) [] _ _ _ _ _ r) = g {enemies= fst $ mkAsteroids 5 (x,y) r}
-update sec g@(MkGameState ks c (MkPlayer n gs im (x,y) vel l o oo) enemies a d hd st p r)
+update sec g@(MkGameState _ _ (MkPlayer _ _ _ (x,y) _ _ _ _) [] _ _ _ r) = g {enemies= fst $ mkAsteroids 5 (x,y) r}
+update sec g@(MkGameState ks c (MkPlayer n gs im (x,y) vel l o oo) enemies a d hd r)
   | l == 0 = MkGameOver n gs 0
   | SpecialKey KeySpace `elem` ks && Char 'w' `elem` ks && Char 'd' `elem` ks = 
     case  () of
-          () | oo/=o && vel > 0 -> movePlayer sec (MkGameState newKeys (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos oo c)) (acc vel (-0.03)) updatedLives (newOr o (-3.5)) (newOr o   3.5)) npe (npb bullets) d (snd(cgPlPos oo (snd hd))) st p r)
-             | otherwise        -> movePlayer sec (MkGameState newKeys (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos oo c)) (acc vel 0.2) updatedLives (newOr o (-4)) (newOr o   3.5)) npe (npb bullets) d (snd(cgPlPos oo (snd hd))) st p r)
+          () | oo/=o && vel > 0 -> movePlayer sec (MkGameState newKeys (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos oo c)) (acc vel (-0.03)) updatedLives (newOr o (-3.5)) (newOr o   3.5)) npe (npb bullets) d (snd(cgPlPos oo (snd hd))) r)
+             | otherwise        -> movePlayer sec (MkGameState newKeys (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos oo c)) (acc vel 0.2) updatedLives (newOr o (-4)) (newOr o   3.5)) npe (npb bullets) d (snd(cgPlPos oo (snd hd))) r)
   | SpecialKey KeySpace `elem` ks && Char 'w' `elem` ks && Char 'a' `elem` ks = 
     case  () of
-          () | oo/=o && vel > 0 -> movePlayer sec (MkGameState newKeys (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos oo c)) (acc vel (-0.03)) updatedLives (newOr o 3.5) (newOr o (-3.5))) npe (npb bullets) d (snd(cgPlPos oo (snd hd))) st p r)
-             | otherwise        -> movePlayer sec (MkGameState newKeys (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos oo c)) (acc vel 0.2) updatedLives (newOr o 3.5) (newOr o (-3.5))) npe (npb bullets) d (snd(cgPlPos oo (snd hd))) st p r)
+          () | oo/=o && vel > 0 -> movePlayer sec (MkGameState newKeys (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos oo c)) (acc vel (-0.03)) updatedLives (newOr o 3.5) (newOr o (-3.5))) npe (npb bullets) d (snd(cgPlPos oo (snd hd))) r)
+             | otherwise        -> movePlayer sec (MkGameState newKeys (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos oo c)) (acc vel 0.2) updatedLives (newOr o 3.5) (newOr o (-3.5))) npe (npb bullets) d (snd(cgPlPos oo (snd hd))) r)
 
   | Char 'w' `elem` ks && Char 'd' `elem` ks = 
     if oo /= o && vel > 0
-        then movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos oo c)) (acc vel (-0.03)) updatedLives (newOr o (-3.5)) (newOr o 3.5)) npe (npb a) d (snd(cgPlPos oo (snd hd))) st p r)
-        else movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos oo c)) (acc vel 0.2) updatedLives (newOr o (-3.5)) (newOr o 3.5)) npe (npb a) d (snd(cgPlPos oo (snd hd))) st p r)
+        then movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos oo c)) (acc vel (-0.03)) updatedLives (newOr o (-3.5)) (newOr o 3.5)) npe (npb a) d (snd(cgPlPos oo (snd hd))) r)
+        else movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos oo c)) (acc vel 0.2) updatedLives (newOr o (-3.5)) (newOr o 3.5)) npe (npb a) d (snd(cgPlPos oo (snd hd))) r)
   | Char 'w' `elem` ks && Char 'a' `elem` ks = 
     if oo /= o && vel > 0
-      then movePlayer sec (MkGameState ks (c+1)(MkPlayer n updatedGs fire (fst(cgPlPos oo c)) (acc vel (-0.03)) updatedLives (newOr o    3.5) (newOr o   (-3.5))) npe (npb a) d (snd(cgPlPos oo (snd hd))) st p r)
-      else movePlayer sec (MkGameState ks (c+1)(MkPlayer n updatedGs fire (fst(cgPlPos oo c)) (acc vel 0.2) updatedLives (newOr o   3.5) (newOr o   (-3.5))) npe (npb a) d (snd(cgPlPos oo (snd hd))) st p r)
+      then movePlayer sec (MkGameState ks (c+1)(MkPlayer n updatedGs fire (fst(cgPlPos oo c)) (acc vel (-0.03)) updatedLives (newOr o    3.5) (newOr o   (-3.5))) npe (npb a) d (snd(cgPlPos oo (snd hd))) r)
+      else movePlayer sec (MkGameState ks (c+1)(MkPlayer n updatedGs fire (fst(cgPlPos oo c)) (acc vel 0.2) updatedLives (newOr o   3.5) (newOr o   (-3.5))) npe (npb a) d (snd(cgPlPos oo (snd hd))) r)
 
   | SpecialKey KeySpace `elem` ks && Char 'w' `elem` ks = 
     case  () of
-            () | oo/=o && vel > 0 -> movePlayer sec (MkGameState newKeys (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos o c)) (acc vel (-0.06)) updatedLives o o) npe (npb bullets) d (snd(cgPlPos o (snd hd))) st p r)
-               | otherwise        -> movePlayer sec (MkGameState newKeys (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos o c)) (acc vel 0.2) updatedLives o o) npe (npb bullets) d (snd(cgPlPos o (snd hd))) st p r)
+            () | oo/=o && vel > 0 -> movePlayer sec (MkGameState newKeys (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos o c)) (acc vel (-0.06)) updatedLives o o) npe (npb bullets) d (snd(cgPlPos o (snd hd))) r)
+               | otherwise        -> movePlayer sec (MkGameState newKeys (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos o c)) (acc vel 0.2) updatedLives o o) npe (npb bullets) d (snd(cgPlPos o (snd hd))) r)
 
   | SpecialKey KeySpace `elem` ks && Char 'a' `elem` ks = 
-      movePlayer sec (MkGameState newKeys (c+1) (MkPlayer n updatedGs False (fst(cgPlPos oo c)) (acc vel (-0.06)) updatedLives (newOr o 3.5) oo) npe (npb bullets) d (snd(cgPlPos oo (snd hd))) st p r)
+      movePlayer sec (MkGameState newKeys (c+1) (MkPlayer n updatedGs False (fst(cgPlPos oo c)) (acc vel (-0.06)) updatedLives (newOr o 3.5) oo) npe (npb bullets) d (snd(cgPlPos oo (snd hd))) r)
   | SpecialKey KeySpace `elem` ks && Char 'd' `elem` ks = 
-      movePlayer sec (MkGameState newKeys (c+1) (MkPlayer n updatedGs False (fst(cgPlPos oo c)) (acc vel (-0.06)) updatedLives (newOr o (-3.5)) oo) npe (npb bullets) d (snd(cgPlPos oo (snd hd))) st p r)
+      movePlayer sec (MkGameState newKeys (c+1) (MkPlayer n updatedGs False (fst(cgPlPos oo c)) (acc vel (-0.06)) updatedLives (newOr o (-3.5)) oo) npe (npb bullets) d (snd(cgPlPos oo (snd hd))) r)
   | SpecialKey KeySpace `elem` ks = 
-      movePlayer sec (MkGameState newKeys (c+1) (MkPlayer n updatedGs False (fst(cgPlPos oo c)) (acc vel (-0.06)) updatedLives o oo) npe (npb bullets) d (snd(cgPlPos oo (snd hd))) st p r)
+      movePlayer sec (MkGameState newKeys (c+1) (MkPlayer n updatedGs False (fst(cgPlPos oo c)) (acc vel (-0.06)) updatedLives o oo) npe (npb bullets) d (snd(cgPlPos oo (snd hd))) r)
 
   | Char 'w' `elem` ks = 
     if oo/=o && vel > 0
-        then movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos o c)) (acc vel (-0.03)) updatedLives o o) npe (npb a) d (snd(cgPlPos o (snd hd))) st p r)
-        else movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos o c)) (acc vel 0.2) updatedLives o o) npe (npb a) d (snd(cgPlPos o (snd hd))) st p r)
+        then movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos o c)) (acc vel (-0.03)) updatedLives o o) npe (npb a) d (snd(cgPlPos o (snd hd))) r)
+        else movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs fire (fst(cgPlPos o c)) (acc vel 0.2) updatedLives o o) npe (npb a) d (snd(cgPlPos o (snd hd))) r)
   | Char 'a' `elem` ks = 
     if vel > 0
-        then movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs False (fst(cgPlPos oo c)) (acc vel (-0.03)) updatedLives (newOr o   3.5) oo) npe (npb a) d (snd(cgPlPos oo (snd hd))) st p r)
-        else movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs False (fst(cgPlPos oo c)) vel updatedLives (newOr o   3.5) oo) npe (npb a) d (snd(cgPlPos oo (snd hd))) st p r)
+        then movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs False (fst(cgPlPos oo c)) (acc vel (-0.03)) updatedLives (newOr o   3.5) oo) npe (npb a) d (snd(cgPlPos oo (snd hd))) r)
+        else movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs False (fst(cgPlPos oo c)) vel updatedLives (newOr o   3.5) oo) npe (npb a) d (snd(cgPlPos oo (snd hd))) r)
   | Char 'd' `elem` ks = 
     if vel > 0
-        then movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs False (fst(cgPlPos oo c)) (acc vel (-0.03)) updatedLives (newOr o (-3.5)) oo) npe (npb a) d (snd(cgPlPos oo (snd hd))) st p r)
-        else movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs False (fst(cgPlPos oo c)) vel updatedLives (newOr o (-3.5)) oo) npe (npb a) d (snd(cgPlPos oo (snd hd))) st p r)
+        then movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs False (fst(cgPlPos oo c)) (acc vel (-0.03)) updatedLives (newOr o (-3.5)) oo) npe (npb a) d (snd(cgPlPos oo (snd hd))) r)
+        else movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs False (fst(cgPlPos oo c)) vel updatedLives (newOr o (-3.5)) oo) npe (npb a) d (snd(cgPlPos oo (snd hd))) r)
   
-  | otherwise = movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs False (fst(cgPlPos oo c)) (acc vel (-0.03)) updatedLives o oo) npe (npb a) d (snd(cgPlPos oo (snd hd))) st p r)
+  | otherwise = movePlayer sec (MkGameState ks (c+1) (MkPlayer n updatedGs False (fst(cgPlPos oo c)) (acc vel (-0.03)) updatedLives o oo) npe (npb a) d (snd(cgPlPos oo (snd hd))) r)
   where
       newOr :: Float -> Float -> Float
       newOr o x | (o + x) >= 360 = o + x - 360
@@ -155,19 +155,19 @@ handleKeys (EventKey (MouseButton LeftButton) Down _ mousePos) mm@(MkMainMenu bo
           currScore = [makeScore currName score, makeText "Press Enter to go back" (-240) (-80) 0.5]
           updatedPause = makeText currName namePos 40 0.5 : pauseBox--(-460) 40 : pauseBox
           namePos = (-60) - fromIntegral (length currName * 15)
-          game = MkGameState [] 1 player enemies [] Easy (False,0) True False sg
+          game = MkGameState [] 1 player enemies [] Easy (False,0) sg
           player = MkPlayer currName 0 False (0,0) 0.0 3 90 90
           enemies = fst (mkAsteroids 5 (0,0) (mkStdGen 2))
           sg = snd $ mkAsteroids 5 (0,0) (mkStdGen 2)
 
-handleKeys (EventKey key@(Char c) state _ _) g@(MkGameState ks cnt (MkPlayer n gs im (x,y) vel l o oo) e a d hd st p r)
+handleKeys (EventKey key@(Char c) state _ _) g@(MkGameState ks cnt (MkPlayer n gs im (x,y) vel l o oo) e a d hd r)
   | c == 'w' =  case state of Down  -> g { keys = insert key ks}
                               Up    -> g { keys = delete key ks}
   | c == 'a' =  case state of Down  -> g { keys = insert key ks}
                               Up    -> g { keys = delete key ks}
   | c == 'd' =  case state of Down  -> g { keys = insert key ks}
                               Up    -> g { keys = delete key ks}
-handleKeys (EventKey key@(SpecialKey KeySpace) state _ _)  g@(MkGameState ks cnt(MkPlayer n gs im (x,y) v l o oo) e a d hd st p r)
+handleKeys (EventKey key@(SpecialKey KeySpace) state _ _)  g@(MkGameState ks cnt(MkPlayer n gs im (x,y) v l o oo) e a d hd r)
         | state == Down = case () of
                           () | nrPresses >= 5 && nrPresses <= 10 -> g { keys = replicate 5 key ++ filter (\x-> x /= Char 'n') ks}
                              | otherwise -> g { keys = insert (Char 'n') ks}
@@ -176,11 +176,11 @@ handleKeys (EventKey key@(SpecialKey KeySpace) state _ _)  g@(MkGameState ks cnt
                              | otherwise -> g
         where
           nrPresses = length (filter (\x-> x ==  Char 'n') ks)
-handleKeys (EventKey (Char 'p') Down _ _) g@(MkGameState ks cnt(MkPlayer n gs im (x,y) 0.0 l o oo) e a d hd st p r)
+handleKeys (EventKey (Char 'p') Down _ _) g@(MkGameState ks cnt(MkPlayer n gs im (x,y) 0.0 l o oo) e a d hd r)
   = MkPauseMenu g pauseBox
 handleKeys (EventKey (Char 'p') Down _ _) (MkPauseMenu g boxes)
   = g
-handleKeys (EventKey (MouseButton LeftButton) Down _ mousePos) pm@(MkPauseMenu game@(MkGameState ks cnt player@(MkPlayer n gs im (x,y) vel l o oo) e a d hd st p r) boxes)
+handleKeys (EventKey (MouseButton LeftButton) Down _ mousePos) pm@(MkPauseMenu game@(MkGameState ks cnt player@(MkPlayer n gs im (x,y) vel l o oo) e a d hd r) boxes)
   | x' > (-460) && x' < 500 && y' > (-60) && y' < 20 = game
   | x' > (-460) && x' < 500 && y' > (-142) && y' < (-62) = MkHighScore currScore n gs True game -- TBD
   | x' > (-460) && x' < 500 && y' > (-224) && y' < (-144) = MkMainMenu updatedBoxes n 0 False
@@ -195,7 +195,7 @@ handleKeys (EventKey (MouseButton LeftButton) Down _ mousePos) (MkGameOver n gs 
   where (x, y) = mousePos
         boxes = makeText n namePos 40 0.5 : menuBox --(-460) 80 : menuBox
         namePos = (-60) - fromIntegral (length n * 15)
-        newGame = MkGameState [] 1 player enemies [] Easy (False,1) True False sg
+        newGame = MkGameState [] 1 player enemies [] Easy (False,1) sg
         player = MkPlayer n 0 False (0,0) 0.0 3 90 90
         enemies = fst (mkAsteroids 5 (0,0) (mkStdGen 2))
         sg = snd $ mkAsteroids 5 (0,0) (mkStdGen 2)
