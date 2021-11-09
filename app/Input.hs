@@ -23,19 +23,19 @@ quitScreen (MkQuitGame) = do exitWith (ExitSuccess)
 -- Mostly pure render function that also requires impurity.
 -- getScreenSize is an impure function and is required to avoid resolution issues.
 gameScreen :: GameState -> IO Picture
-gameScreen (MkGameState ks c (MkPlayer _ gs im _ _ 0 o oo) en b _ hd _ _ _ )
+gameScreen (MkGameState ks c (MkPlayer _ gs im _ _ 0 o oo) en b _ hd _ )
   = do (x',y') <- getScreenSize
-       let (x,y) = ( (fromIntegral x'), (fromIntegral y') )
-       let (width, height) = ((middle x), (middle y))
-       let (left, right) = ( (0 - width), width )
-       let (top, bottom) = ( height, (0 - height) )
+       let (x,y) = ( fromIntegral x', fromIntegral y' )
+       let (width, height) = (middle x, middle y)
+       let (left, right) = ( negate width, width )
+       let (top, bottom) = ( height, negate height )
        pure (pictures [deadText, makeText ("Score: " ++ show gs) (-260) (-40) 0.5])
-gameScreen (MkGameState ks c (MkPlayer _ gs im (x,y) _ l o oo) en b _ hd _ _ _ )
+gameScreen (MkGameState ks c (MkPlayer _ gs im (x,y) _ l o oo) en b _ hd _ )
   = do (x'',y'') <- getScreenSize
-       let (x',y') = ( (fromIntegral x''), (fromIntegral y'') )
-       let (width, height) = ((middle x'), (middle y'))
-       let (left, right) = ( (0 - width), width )
-       let (top, bottom) = ( height, (0 - height) )
+       let (x',y') = ( fromIntegral x'', fromIntegral y'' )
+       let (width, height) = (middle x', middle y')
+       let (left, right) = ( negate width, width )
+       let (top, bottom) = ( height, negate height )
        let gsText = makeText ("Score: " ++ show gs) (left+160) (top-80) 0.5
        let lifeText = makeText ("Lives: " ++ show l) (left+160) (top-160) 0.5
        if fst hd then
@@ -49,9 +49,9 @@ gameScreen (MkGameState ks c (MkPlayer _ gs im (x,y) _ l o oo) en b _ hd _ _ _ )
     where enemies = map (createPicture white) en
           eb = [b | (Spaceship _ _ _ b) <- en]
           bullets = map (\(MkBullet _ (newX, newY) o _) ->
-                    translate newX newY $ rotate (360-o) $ color white $ ThickCircle 1.5 3) (b++eb)
+                    translate newX newY $ rotate (360-o) $ color white $ ThickCircle 1.5 3) (b++eb)
 
--- 
+-- Writes a new version of highscores to file.
 writeHistory :: GameState -> IO ()
 writeHistory (MkMainMenu _ name score True)
   = do let filepath = "highscores.txt"
@@ -63,6 +63,7 @@ writeHistory (MkMainMenu _ name score True)
        let highscore = updateScore name score contents
        writeFile filepath highscore
 
+-- Reads the current highscores file and turns it to an IO Picture.
 getHistory :: GameState -> IO Picture
 getHistory m@(MkHighScore _ name score _ _)
   = do let filepath = "highscores.txt"
@@ -71,15 +72,16 @@ getHistory m@(MkHighScore _ name score _ _)
        content <- readFile filepath
        () <- pure (foldr seq () content)
        (x',y') <- getScreenSize
-       let (x,y) = ( (fromIntegral x'), (fromIntegral y') )
-       let (width, height) = ((middle x), (middle y))
-       let (left, right) = ( (0 - width), width )
-       let (top, bottom) = ( height, (0 - height) )
+       let (x,y) = ( fromIntegral x', fromIntegral y' )
+       let (width, height) = (middle x, middle y)
+       let (left, right) = ( negate width, width )
+       let (top, bottom) = ( height, negate height )
        let contents = lines content
-       history <- pure (pictures [ (paintPicture contents (-80) (height-140) emptyPic ), ( makeText "Press Enter to go back" (-240) (bottom+140) 0.3 ) ] )
-       pure history
+       pure (pictures [ paintPicture contents (-80) (height-140) emptyPic,
+                        makeText "Press Enter to go back" (-240) (bottom+140) 0.3])
 
 -- updateScore --
+-- Gives highscores with new score if conditions are met, else gives back old highscores.
 -- true if:
 -- (1) less than 10 spots occupied
 -- (2) if 10 spots but one has lesser score
@@ -99,12 +101,12 @@ getHistory m@(MkHighScore _ name score _ _)
 -- pos = 1
 
 updateScore :: String -> Int -> [String] -> String
-updateScore name score [] = name ++ ": " ++ (show score) ++ "\n"
+updateScore name score [] = name ++ ": " ++ show score ++ "\n"
 updateScore name score contents
   | length lesserIdx > 0 = newContents
   | length contents < 10 = unlines (contents ++ [newScore])
   | otherwise = unlines contents
-    where newScore = name ++ ": " ++ (show score)
+    where newScore = name ++ ": " ++ show score
           lesserIdx = [idx | (idx,x) <- zip [0..] contents, let x' = words x,
                        let oldScore = (read . head . tail) x', score > oldScore]
           pos = head lesserIdx
