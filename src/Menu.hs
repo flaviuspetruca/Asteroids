@@ -9,6 +9,12 @@ import Graphics.Gloss.Interface.Environment
 
 import Struct
 
+emptyPic :: Picture
+emptyPic = makeText "" 0 0 0.5
+
+--returnPic :: Picture
+--returnPic = makeText "Press Enter to go back" (-400) (-400) 0.3
+
 enterBox = [enterText, enterBorder]
 menuBox = [startText, startBorder, scoreText, scoreBorder, quitText, quitBorder]
 pauseBox = [resumeText, resumeBorder, scoreText, scoreBorder, quitText, quitBorder]
@@ -23,12 +29,6 @@ paintPicture (name:names) x startY pic
 --paintPicture :: [String] -> Float -> Float -> Picture -> Picture
 --paintPicture names x startY pic = foldr (\name acc -> let y = (y - 80) in (pictures [pic, (makeText name x y), acc])) pic names
 --  where y = startY
-
-emptyPic :: Picture
-emptyPic = makeText "" 0 0 0.5
-
-returnPic :: Picture
-returnPic = makeText "Press Enter to go back" (-400) (-400) 0.3
 
 makeText :: String -> Float -> Float -> Float -> Picture
 makeText name x y scale

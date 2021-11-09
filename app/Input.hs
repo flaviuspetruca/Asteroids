@@ -1,6 +1,7 @@
 module Input where
 -- INPUT --
 -- For impure functions.
+
 import Struct
 import Menu
 import Logic
@@ -12,8 +13,15 @@ import Graphics.Gloss.Interface.Pure.Game
 import Graphics.Gloss.Interface.Environment
 import System.Random
 import System.Directory
+import System.Exit
 import Control.Monad
 
+-- Takes the quitting gamestate and returns a safe exit.
+quitScreen :: GameState -> IO Picture
+quitScreen (MkQuitGame) = do exitWith (ExitSuccess)
+
+-- Mostly pure render function that also requires impurity.
+-- getScreenSize is an impure function and is required to avoid resolution issues.
 gameScreen :: GameState -> IO Picture
 gameScreen (MkGameState ks c (MkPlayer _ gs im _ _ 0 o oo) en b _ hd _ )
   = do (x',y') <- getScreenSize
@@ -43,17 +51,7 @@ gameScreen (MkGameState ks c (MkPlayer _ gs im (x,y) _ l o oo) en b _ hd _ )
           bullets = map (\(MkBullet _ (newX, newY) o _) ->
                     translate newX newY $ rotate (360-o) $ color white $ ThickCircle 1.5 3) (b++eb)
 
-addStatus :: GameState -> IO Picture
-addStatus (MkGameState ks c (MkPlayer _ gs im _ _ l o oo) en b _ hd _ )
-  = do (x',y') <- getScreenSize
-       let (x,y) = ( fromIntegral x', fromIntegral y' )
-       let (width, height) = (middle x, middle y)
-       let (left, right) = ( negate width, width )
-       let (top, bottom) = ( height, negate height )
-       let gsText = makeText (show gs) (left+160) (top-80) 0.5
-       let lifeText = makeText (show l) (left+160) (top-160) 0.5
-       pure (pictures [gsText, lifeText])
-
+-- Writes a new version of highscores to file.
 writeHistory :: GameState -> IO ()
 writeHistory (MkMainMenu _ name score True)
   = do let filepath = "highscores.txt"
@@ -65,6 +63,7 @@ writeHistory (MkMainMenu _ name score True)
        let highscore = updateScore name score contents
        writeFile filepath highscore
 
+-- Reads the current highscores file and turns it to an IO Picture.
 getHistory :: GameState -> IO Picture
 getHistory m@(MkHighScore _ name score _ _)
   = do let filepath = "highscores.txt"
@@ -81,6 +80,8 @@ getHistory m@(MkHighScore _ name score _ _)
        pure (pictures [ paintPicture contents (-80) (height-140) emptyPic,
                         makeText "Press Enter to go back" (-240) (bottom+140) 0.3])
 
+-- updateScore --
+-- Gives highscores with new score if conditions are met, else gives back old highscores.
 -- true if:
 -- (1) less than 10 spots occupied
 -- (2) if 10 spots but one has lesser score

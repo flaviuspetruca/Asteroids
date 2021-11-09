@@ -25,7 +25,7 @@ import Struct
 import Menu
 import Game
 
--- Updates the GameState one step further
+-- Updates the GameState one step further.
 update :: Float -> GameState -> GameState
 update sec (MkEnterName boxes name)                 = MkEnterName boxes name
 update sec (MkMainMenu boxes name score _)          = MkMainMenu  boxes name score False
@@ -118,6 +118,8 @@ update sec g@(MkGameState ks c (MkPlayer n gs im (x,y) vel l o oo) enemies a d h
       updatedLives = snd $ newPosEnemies (fst hd) enemies enemies (x,y) a l c r o (x,y)
       npb art = fst $ newPosBullets art enemies gs
 
+-- Handles the various events and the input keys related,
+-- with extensive pattern matching for different gamestates.
 handleKeys :: Event -> GameState -> GameState
 handleKeys (EventKey (SpecialKey KeyEnter) _ _ _) en@(MkEnterName boxes currName)
   | length currName > 0 = MkMainMenu updatedBoxes currName 0 False
