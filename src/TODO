@@ -1,6 +1,6 @@
 [ ] Complete game design document
-[ ] Remove obsolete files, including this
-[ ] Make game quit properly instead of bad render
+[X] Remove obsolete files, including this
+[X] Make game quit properly instead of bad render
 [ ] Comment the code
 [ ] Refactor duplicate code - look for Type classes, functions over consts
 [ ] Look for the opportunity to create a data Menu
